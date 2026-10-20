@@ -46,7 +46,7 @@ export function SignInPage() {
         </div>
         <p className="auth-legal">By continuing, you agree to our <Link to="/terms">Terms</Link> and <Link to="/privacy">Privacy Policy</Link>.</p>
       </section>
-      <aside className="auth-art" aria-label="ELYVEX logo and motto"><img src="/assets/elyvex-logo.png" alt="ELYVEX — Better choices begin here." /></aside>
+      <aside className="auth-art" aria-label="ELYVEX logo and motto"><img src={`${import.meta.env.BASE_URL}assets/elyvex-logo.png`} alt="ELYVEX — Better choices begin here." /></aside>
     </main>
   );
 }
