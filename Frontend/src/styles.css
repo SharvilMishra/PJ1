@@ -48,3 +48,61 @@ body:has(.auth-page){background:#101015}
 .auth-art>img.auth-phone-illustration{position:absolute;inset:0;width:100%;height:100%;max-height:none;object-fit:cover;object-position:left center;transform:none;filter:none}
 @media(max-width:860px) and (min-width:681px){.auth-page{grid-template-columns:minmax(360px,48%) minmax(0,52%)}.auth-panel{padding-left:34px;padding-right:30px}.auth-art>img.auth-phone-illustration{object-position:57% center}}
 @media(max-width:680px){body:has(.auth-page){background:#fff9f8}.auth-page{width:100%;height:auto;min-height:100svh;margin:0;border:0;border-radius:0;box-shadow:none;display:flex;flex-direction:column;overflow:visible}.auth-art{order:-1;display:block;width:100%;height:185px;min-height:185px;flex:none}.auth-art>img.auth-phone-illustration{object-position:66% 42%}.auth-panel{height:auto;min-height:calc(100svh - 185px);padding:24px 24px 20px}.auth-content{width:min(100%,430px);margin:auto;padding:24px 0}.auth-heading h1{font-size:2.8rem}.auth-legal{margin:12px 0 0}.auth-form{padding:18px 16px}.auth-art-copy,.auth-art-brand{display:none}}
+
+/* Comparison cards stay evenly sized, and advantages are easier to scan. */
+.compare-products{width:min(900px,100%);grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:stretch}
+.compare-product{min-width:0;min-height:0;padding:20px 18px 18px}
+.compare-product h3{max-width:100%;overflow-wrap:anywhere;font-size:1rem;line-height:1.35}
+.compare-device{width:90px;height:150px;margin:4px auto 15px;border-radius:18px}
+.compare-select{width:min(100%,290px);max-width:100%;margin:14px auto 0}
+.compare-select label{font-size:.57rem}
+.compare-select select{width:100%;min-width:0;padding:10px 28px 10px 10px;font-size:.69rem}
+.spec-header,.spec-row{grid-template-columns:minmax(140px,.8fr) minmax(0,1fr) minmax(0,1fr);padding-left:20px;padding-right:20px;column-gap:14px}
+.spec-header>span,.spec-row>span{min-width:0;overflow-wrap:anywhere}
+.spec-row{font-size:.75rem;padding-top:13px;padding-bottom:13px}
+.spec-row>span.spec-winner{width:fit-content;max-width:100%;display:flex;align-items:center;gap:7px;flex-wrap:wrap;border-radius:8px;background:#fff0f2;padding:5px 8px;color:#9d1635}
+.spec-winner i{display:inline-block;width:auto;margin:0;padding:3px 6px;background:#f9dfe4;color:#94213a;font-size:.55rem;white-space:nowrap}
+.brand-mark{width:40px;height:40px;flex:none;object-fit:contain;border-radius:11px;background:#080808;box-shadow:0 2px 8px #26040a22}
+.appearance-options button{cursor:pointer;transition:border-color .16s,box-shadow .16s,transform .16s}
+.appearance-options button:hover{border-color:#cf7183;transform:translateY(-1px)}
+.appearance-options button:focus-visible{outline:3px solid #dd7184;outline-offset:3px}
+.appearance-options button[aria-pressed="true"]{border-color:#b51a3b;box-shadow:0 0 0 2px #f5d7dd,0 4px 12px #8b193015;color:#91203a}
+@media(max-width:680px){.compare-products{grid-template-columns:1fr;width:min(440px,100%);gap:12px}.spec-header,.spec-row{grid-template-columns:minmax(95px,.7fr) minmax(0,1fr) minmax(0,1fr);padding-left:10px;padding-right:10px;column-gap:7px}.spec-row{font-size:.66rem}.spec-row>span.spec-winner{padding:4px 5px;gap:4px}.spec-winner i{white-space:normal;font-size:.49rem}}
+
+/* Theme preference is persisted as a root data attribute; System follows the OS. */
+:root[data-theme="dark"]{color-scheme:dark;--red:#f05a76;--red2:#d44361;--rose:#24191e;--line:#3b2e34;--muted:#b7a8ad;color:#f5edf0;background:#171317}
+:root[data-theme="dark"] body{background:#171317;color:#f5edf0}
+:root[data-theme="dark"] .site-header{background:#1e191df2;border-color:#362b30}
+:root[data-theme="dark"] .brand,:root[data-theme="dark"] .primary-nav a,:root[data-theme="dark"] .icon-button{color:#f1e8eb}
+:root[data-theme="dark"] .primary-nav a:hover,:root[data-theme="dark"] .primary-nav a.active{color:#ff7189}
+:root[data-theme="dark"] .site-footer{background:#191519;border-color:#362b30;color:#b8a9ae}
+:root[data-theme="dark"] .page-heading h1,:root[data-theme="dark"] .section-heading h2,:root[data-theme="dark"] .home-cta h2,:root[data-theme="dark"] .compare-topline h2,:root[data-theme="dark"] .settings-card-title h2,:root[data-theme="dark"] .spec-table-heading h2,:root[data-theme="dark"] .compare-product h3,:root[data-theme="dark"] .saved-details h3,:root[data-theme="dark"] .result-details h3{color:#f5edf0}
+:root[data-theme="dark"] .lead,:root[data-theme="dark"] .phone-info .phone-brandline,:root[data-theme="dark"] .phone-specs,:root[data-theme="dark"] .result-specs,:root[data-theme="dark"] .settings-card-title p,:root[data-theme="dark"] .dataset-note{color:#b8a9ae}
+:root[data-theme="dark"] .phone-card,:root[data-theme="dark"] .result-card,:root[data-theme="dark"] .compare-product,:root[data-theme="dark"] .spec-table,:root[data-theme="dark"] .settings-card,:root[data-theme="dark"] .saved-card,:root[data-theme="dark"] .empty-saved-state,:root[data-theme="dark"] .menu-popover,:root[data-theme="dark"] .updates-dialog{background:#211b20;border-color:#3b3036;color:#f5edf0}
+:root[data-theme="dark"] .spec-header{background:#2a2228;color:#c3b4b9}
+:root[data-theme="dark"] .spec-row,:root[data-theme="dark"] .spec-row>b,:root[data-theme="dark"] .spec-row>span{border-color:#392e33;color:#cbbdc1}
+:root[data-theme="dark"] .spec-row>span.spec-winner{background:#3d202a;color:#ff8da1}
+:root[data-theme="dark"] .spec-winner i{background:#552a36;color:#ffb2bf}
+:root[data-theme="dark"] .fit-summary,:root[data-theme="dark"] .home-cta{background:#2b2026;border-color:#453139}
+:root[data-theme="dark"] .home-hero{background:#251b20;border-color:#402d34}
+:root[data-theme="dark"] .hero-text h1,:root[data-theme="dark"] .phone-info h3,:root[data-theme="dark"] .fit-summary h2{color:#f8edf0}
+:root[data-theme="dark"] .hero-text>p,:root[data-theme="dark"] .fit-summary p{color:#c2b1b7}
+:root[data-theme="dark"] .hero-search,:root[data-theme="dark"] .search-box,:root[data-theme="dark"] .compare-select select,:root[data-theme="dark"] .settings-fields input,:root[data-theme="dark"] .appearance-options button{background:#181418;border-color:#473940;color:#e9dfe2}
+:root[data-theme="dark"] .hero-search input,:root[data-theme="dark"] .search-box input{background:transparent;color:#f4ecef}
+:root[data-theme="dark"] .menu-popover>a,:root[data-theme="dark"] .menu-signout{color:#e9dfe2}
+:root[data-theme="dark"] .menu-popover>a:hover,:root[data-theme="dark"] .menu-signout:hover{background:#35242b;color:#ff8298}
+:root[data-theme="dark"] .appearance-options button[aria-pressed="true"]{border-color:#e55b77;box-shadow:0 0 0 2px #572632;color:#ff9bad}
+:root[data-theme="dark"] .outline-button,:root[data-theme="dark"] .header-signin{background:#211b20;border-color:#593540;color:#ff9bad}
+:root[data-theme="dark"] .empty-saved-state p,:root[data-theme="dark"] .compare-brand,:root[data-theme="dark"] .compare-product-price{color:#c9b9be}
+:root[data-theme="dark"] .category-card,:root[data-theme="dark"] .preferences-card,:root[data-theme="dark"] .profile-card,:root[data-theme="dark"] .profile-section,:root[data-theme="dark"] .filters-panel{background:#211b20;border-color:#3b3036;color:#f5edf0}
+:root[data-theme="dark"] .settings-nav a{color:#c7b8bd}
+:root[data-theme="dark"] .settings-nav a.current,:root[data-theme="dark"] .settings-nav a:hover{background:#3b222b;color:#ff9bad}
+:root[data-theme="dark"] .settings-icon,:root[data-theme="dark"] .profile-avatar{background:#3d222c;color:#ff9bad}
+:root[data-theme="dark"] .toggle-row{border-color:#3b3036}
+:root[data-theme="dark"] .settings-fields label,:root[data-theme="dark"] .filter-group label,:root[data-theme="dark"] .filters-title,:root[data-theme="dark"] .results-count{color:#e5d9dd}
+:root[data-theme="dark"] .settings-save,:root[data-theme="dark"] .profile-stats{color:#c7b8bd}
+:root[data-theme="dark"] .auth-panel{background:#1c171b}
+:root[data-theme="dark"] .auth-brand,:root[data-theme="dark"] .auth-heading h1,:root[data-theme="dark"] .auth-form>label,:root[data-theme="dark"] .password-label label{color:#f5edf0}
+:root[data-theme="dark"] .auth-heading>p:last-child,:root[data-theme="dark"] .auth-switch,:root[data-theme="dark"] .auth-legal{color:#beafb4}
+:root[data-theme="dark"] .auth-form,:root[data-theme="dark"] .google-button{background:#251e23;border-color:#44363d;color:#eee3e7}
+:root[data-theme="dark"] .auth-form>input,:root[data-theme="dark"] .password-input input{background:#191519;border-color:#4b3a42;color:#f5edf0}

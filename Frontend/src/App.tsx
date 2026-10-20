@@ -26,7 +26,7 @@ function AppShell() {
   return (
     <div className="app-shell">
       <header className="site-header">
-        <Link className="brand" to="/" aria-label="Elyvex home"><span className="brand-mark">E</span><span>ELYVEX<small>BETTER CHOICES BEGIN HERE</small></span></Link>
+        <Link className="brand" to="/" aria-label="Elyvex home"><img className="brand-mark" src={`${import.meta.env.BASE_URL}assets/elyvex-symbol.png`} alt="" /><span>ELYVEX<small>BETTER CHOICES BEGIN HERE</small></span></Link>
         <nav className="primary-nav" aria-label="Main navigation">
           <Link className={location.pathname === "/" ? "active" : ""} to="/">Discover</Link>
           <Link className={location.pathname === "/compare" ? "active" : ""} to="/compare">Compare</Link>
