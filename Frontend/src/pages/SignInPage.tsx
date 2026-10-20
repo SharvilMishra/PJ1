@@ -37,7 +37,7 @@ export function SignInPage() {
             <div className="password-label"><label htmlFor="password">Password</label></div>
             <div className="password-input"><input id="password" type={showPassword ? "text" : "password"} autoComplete="current-password" placeholder="Enter your password" value={password} onChange={(event) => setPassword(event.target.value)} required minLength={6} /><button type="button" className="show-password" aria-label={showPassword ? "Hide password" : "Show password"} onClick={() => setShowPassword((shown) => !shown)}>{showPassword ? "Hide" : "Show"}</button></div>
             {error && <p className="form-error" role="alert">{error}</p>}
-            {!firebaseConfigured && <p className="auth-config-note">Add your Firebase settings to <code>Frontend/.env</code> to enable sign in.</p>}
+            {!firebaseConfigured && <p className="auth-config-note">Sign in is temporarily unavailable. You can continue browsing as a guest.</p>}
             <button className="auth-submit" type="submit" disabled={busy || !firebaseConfigured}>{busy ? "Signing in…" : "Sign in"}</button>
           </form>
           <div className="auth-divider"><span />or<span /></div>
@@ -46,7 +46,11 @@ export function SignInPage() {
         </div>
         <p className="auth-legal">By continuing, you agree to our <Link to="/terms">Terms</Link> and <Link to="/privacy">Privacy Policy</Link>.</p>
       </section>
-      <aside className="auth-art" aria-label="ELYVEX logo and motto"><img src={`${import.meta.env.BASE_URL}assets/elyvex-logo.png`} alt="ELYVEX — Better choices begin here." /></aside>
+      <aside className="auth-art" aria-label="A preview of phones you can discover with ELYVEX">
+        <div className="auth-art-copy"><span>FIND YOUR NEXT FAVORITE</span><h2>Made for the way you move.</h2><p>Compare the details that matter and find your perfect match.</p></div>
+        <img className="auth-phone-illustration" src={`${import.meta.env.BASE_URL}assets/phone-hero.svg`} alt="Two crimson and graphite smartphones" />
+        <div className="auth-art-brand"><b>ELYVEX</b><span>BETTER CHOICES BEGIN HERE</span></div>
+      </aside>
     </main>
   );
 }

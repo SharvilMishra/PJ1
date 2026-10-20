@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 900" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">ELYVEX phone finder</title>
+  <desc id="desc">Two premium smartphones, one crimson and one graphite, displayed at an angle.</desc>
+  <defs>
+    <linearGradient id="back" x1="205" y1="230" x2="470" y2="720" gradientUnits="userSpaceOnUse"><stop stop-color="#ff8c98"/><stop offset=".35" stop-color="#d82749"/><stop offset="1" stop-color="#68091f"/></linearGradient>
+    <linearGradient id="edge" x1="290" y1="200" x2="530" y2="740" gradientUnits="userSpaceOnUse"><stop stop-color="#ffd8dc"/><stop offset=".18" stop-color="#f0546c"/><stop offset=".56" stop-color="#870d2a"/><stop offset="1" stop-color="#ff6f83"/></linearGradient>
+    <linearGradient id="screen" x1="450" y1="230" x2="655" y2="730" gradientUnits="userSpaceOnUse"><stop stop-color="#f8d8da"/><stop offset=".48" stop-color="#8f142e"/><stop offset="1" stop-color="#1b1016"/></linearGradient>
+    <linearGradient id="glow" x1="245" y1="310" x2="600" y2="660" gradientUnits="userSpaceOnUse"><stop stop-color="#fff" stop-opacity=".72"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    <filter id="shadow" x="75" y="81" width="690" height="800" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feGaussianBlur stdDeviation="24"/></filter>
+    <filter id="soft" x="100" y="100" width="630" height="740" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feGaussianBlur stdDeviation="35"/></filter>
+  </defs>
+  <ellipse cx="455" cy="700" rx="225" ry="86" fill="#12070c" fill-opacity=".62" filter="url(#shadow)"/>
+  <ellipse cx="440" cy="545" rx="210" ry="210" fill="#fa324e" fill-opacity=".25" filter="url(#soft)"/>
+  <g transform="rotate(-14 340 470)">
+    <rect x="210" y="190" width="270" height="530" rx="48" fill="#3d0716" stroke="url(#edge)" stroke-width="12"/>
+    <rect x="220" y="201" width="250" height="508" rx="39" fill="url(#back)"/>
+    <path d="M235 210h156c-72 143-93 347-13 490H235c-10 0-15-7-15-17V226c0-10 5-16 15-16Z" fill="url(#glow)" opacity=".4"/>
+    <rect x="239" y="224" width="122" height="126" rx="34" fill="#a50c2b" stroke="#ffabb4" stroke-opacity=".72" stroke-width="3"/>
+    <circle cx="278" cy="264" r="20" fill="#260b13" stroke="#f9c5ca" stroke-width="5"/><circle cx="278" cy="264" r="9" fill="#7196a2"/>
+    <circle cx="322" cy="264" r="20" fill="#260b13" stroke="#f9c5ca" stroke-width="5"/><circle cx="322" cy="264" r="9" fill="#7196a2"/>
+    <circle cx="278" cy="309" r="20" fill="#260b13" stroke="#f9c5ca" stroke-width="5"/><circle cx="278" cy="309" r="9" fill="#7196a2"/>
+    <circle cx="329" cy="322" r="8" fill="#ffd8c3"/>
+    <path d="M470 335v92" stroke="#ffb8c0" stroke-opacity=".75" stroke-width="5" stroke-linecap="round"/>
+  </g>
+  <g transform="rotate(11 525 475)">
+    <rect x="405" y="178" width="264" height="555" rx="48" fill="#08090e" stroke="url(#edge)" stroke-width="10"/>
+    <rect x="418" y="192" width="238" height="527" rx="37" fill="url(#screen)"/>
+    <path d="M428 475c45-125 115-138 227-248v290c-95-33-151 21-227 93V475Z" fill="#ff7584" fill-opacity=".48"/>
+    <path d="M427 575c79-102 150-131 229-115v223H428l-1-108Z" fill="#270b15" fill-opacity=".72"/>
+    <rect x="498" y="206" width="80" height="16" rx="8" fill="#08090e"/>
+    <circle cx="589" cy="214" r="5" fill="#40343a"/>
+    <rect x="435" y="244" width="204" height="2" rx="1" fill="#fff" fill-opacity=".4"/>
+    <circle cx="537" cy="665" r="24" fill="#fff" fill-opacity=".1" stroke="#fff" stroke-opacity=".5" stroke-width="2"/>
+    <path d="m532 665 5-6 5 6-5 6-5-6Z" fill="#fff"/>
+    <path d="M657 330v116" stroke="#f16b7e" stroke-width="5" stroke-linecap="round"/>
+  </g>
+  <circle cx="182" cy="311" r="4" fill="#fff" fill-opacity=".75"/><circle cx="647" cy="163" r="3" fill="#fff" fill-opacity=".6"/><circle cx="686" cy="573" r="5" fill="#ffc5cc" fill-opacity=".8"/>
+  <path d="M138 621h32m-16-16v32M668 294h24m-12-12v24" stroke="#ffd5db" stroke-opacity=".6" stroke-width="2" stroke-linecap="round"/>
+</svg>

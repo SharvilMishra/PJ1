@@ -1,3 +1,3 @@
 # Datasets
 
-Place the phone catalog CSV supplied by the project owner in this folder. Keep the original file unchanged. See [../docs/dataset-notes.md](../docs/dataset-notes.md) for the proposed canonical fields and data checks. No phone dataset is included yet.
+The current source catalog is `sic_mobile_spec_PJ1.xlsx` (413 phones, one worksheet). Keep the original workbook unchanged. See [../docs/dataset-notes.md](../docs/dataset-notes.md) for its fields, data-quality findings, and the canonical fields planned for app integration.

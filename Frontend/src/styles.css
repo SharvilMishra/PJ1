@@ -12,3 +12,16 @@
 @media(max-width:680px){.guest-pill{font-size:0}.guest-pill:after{content:'Guest';font-size:.61rem;color:#a19496}}
 .legal-consent{display:flex;align-items:flex-start;gap:8px!important;margin:14px 0 0!important;color:#817478!important;font-size:.62rem!important;font-weight:400!important;line-height:1.5}.legal-consent input{width:14px;height:14px;flex:none;margin:1px 0 0;accent-color:var(--red)}.legal-consent a{color:#9e1a37;text-decoration:underline;text-underline-offset:2px}
 .guest-save-note,.settings-status,.settings-error{grid-column:2;margin:12px 0 0;font-size:.66rem;line-height:1.55}.guest-save-note{color:#8c7d80}.guest-save-note a{color:#a51c3a;font-weight:650;text-decoration:underline;text-underline-offset:2px}.settings-status{color:#988c8e}.settings-error{color:#a11c38;background:#fff1f2;border-radius:7px;padding:9px}.preference-summary{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin:-7px 0 17px;color:#94888a;font-size:.68rem}.preference-summary span{padding:6px 9px;background:#fff0f2;border:1px solid #f4dfe2;border-radius:20px;color:#923849}.preference-summary a{margin-left:auto;color:#a51d3a;font-weight:650}.settings-content .button-primary:disabled{opacity:.55;cursor:wait}
+
+/* Sign-in illustration: keep the brand in the compact wordmark and give the hero space to phones. */
+.auth-art{display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 51% 57%,#dd2648 0,#a40e30 43%,#430817 100%)}
+.auth-art-copy{position:absolute;z-index:2;top:10%;left:10%;right:8%;color:#fff}
+.auth-art-copy>span,.auth-art-brand>span{font-size:.62rem;font-weight:750;letter-spacing:.2em;color:#ffd5db}
+.auth-art-copy h2{max-width:510px;margin:12px 0 8px;font:800 clamp(2rem,3.6vw,3.5rem)/1.05 var(--display);letter-spacing:-.06em}
+.auth-art-copy p{max-width:410px;margin:0;color:#ffe7e9;font-size:.88rem;line-height:1.6}
+.auth-art>img.auth-phone-illustration{position:absolute;inset:auto;top:53%;left:50%;width:min(84%,700px);height:auto;max-height:74%;object-fit:contain;transform:translate(-50%,-38%);filter:drop-shadow(0 25px 36px #1c030a75)}
+.auth-art-brand{position:absolute;z-index:2;left:10%;right:10%;bottom:7%;display:flex;align-items:baseline;justify-content:space-between;border-top:1px solid #ffffff4a;padding-top:15px;color:#fff}
+.auth-art-brand b{font:800 1rem var(--display);letter-spacing:.12em}
+.auth-art-brand>span{font-size:.52rem}
+@media(max-width:980px) and (min-width:681px){.auth-page{grid-template-columns:minmax(390px,.95fr) 1.05fr}.auth-panel{padding-left:38px;padding-right:34px}.auth-art-copy{top:8%}.auth-art-brand{bottom:5%}}
+@media(max-width:680px){.auth-art{display:flex;order:-1;min-height:260px;height:260px}.auth-art-copy{top:11%;left:8%;right:4%}.auth-art-copy h2{max-width:245px;font-size:1.65rem}.auth-art-copy p{max-width:240px;font-size:.69rem}.auth-art-copy>span{font-size:.48rem}.auth-art>img.auth-phone-illustration{left:72%;top:58%;width:55%;max-height:92%;transform:translate(-50%,-42%)}.auth-art-brand{display:none}.auth-panel{min-height:calc(100svh - 260px)}.auth-legal{margin-top:30px}}
