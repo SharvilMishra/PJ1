@@ -1,15 +1,92 @@
-import { useState, type ReactNode } from "react";
-const brands = ["Apple", "Google", "Samsung", "OnePlus", "Xiaomi"];
-const specs = ["8 GB+", "12 GB+", "16 GB+"];
-const results = [
-  { name: "Pixel 9 Pro", brand: "Google", price: "₹1,09,999", score: "98% match", tone: "rose", specs: ["16 GB RAM", "4700 mAh", "50 MP camera"] },
-  { name: "Galaxy S24 Ultra", brand: "Samsung", price: "₹1,29,999", score: "94% match", tone: "sand", specs: ["12 GB RAM", "5000 mAh", "200 MP camera"] },
-  { name: "iPhone 16 Pro", brand: "Apple", price: "₹1,19,900", score: "91% match", tone: "lavender", specs: ["8 GB RAM", "3582 mAh", "48 MP camera"] },
-];
+import { useMemo, useState, type ReactNode } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import { usePhoneActions } from "../auth/PhoneActionsProvider";
+import { catalogBrands, catalogPriceBounds, formatPrice, formatProcessor, formatRating, phones, phoneSpecs } from "../data/catalog";
+import type { Phone } from "../types/phone";
+
+const categories = ["All phones", "Camera", "Gaming", "Battery", "Budget", "Premium"] as const;
+const categoryIds: Record<string, string> = { Camera: "camera", Gaming: "gaming", Battery: "battery", Budget: "budget", Premium: "flagship" };
+const minCatalogPrice = Number.isFinite(catalogPriceBounds.min) ? catalogPriceBounds.min : 0;
+const maxCatalogPrice = Number.isFinite(catalogPriceBounds.max) ? catalogPriceBounds.max : 2000;
+const displayTypes = [...new Set(phones.map((phone) => phone.displayType).filter((type): type is string => Boolean(type)))].sort();
+const weightBounds = phones.reduce((bounds, phone) => phone.weightG === null ? bounds : { min: Math.min(bounds.min, phone.weightG), max: Math.max(bounds.max, phone.weightG) }, { min: Infinity, max: -Infinity });
+
 function FilterGroup({ title, children }: { title: string; children: ReactNode }) { return <section className="filter-group"><h3>{title}</h3>{children}</section>; }
+
+function meetsThreshold(value: number | null, threshold: number) { return value !== null && value >= threshold; }
+
 export function SearchPage() {
-  const [selectedBrands, setSelectedBrands] = useState<string[]>([]); const [minPrice, setMinPrice] = useState(15000); const [maxPrice, setMaxPrice] = useState(150000); const [activeCategory, setActiveCategory] = useState("All phones");
-  function toggleBrand(brand: string) { setSelectedBrands((current) => current.includes(brand) ? current.filter((value) => value !== brand) : [...current, brand]); }
-  function clear() { setSelectedBrands([]); setMinPrice(15000); setMaxPrice(150000); setActiveCategory("All phones"); }
-  return <main className="page-wrap search-page"><div className="page-heading search-heading"><div><span className="eyebrow">MADE FOR YOUR MUST-HAVES</span><h1>Advanced search</h1><p className="lead">Dial in the details. Find the phone that checks every box.</p></div><button className="saved-filter-button">♡ <span>Saved searches</span></button></div><div className="search-layout"><aside className="filters-panel"><div className="filters-title"><div><h2>Filters</h2><span>Make it yours</span></div><button onClick={clear}>Clear all</button></div><FilterGroup title="Category"><div className="filter-chips">{["All phones", "Camera", "Gaming", "Battery", "Budget"].map((item) => <button onClick={() => setActiveCategory(item)} className={activeCategory === item ? "selected" : ""} key={item}>{item}</button>)}</div></FilterGroup><FilterGroup title="Your budget"><div className="range-labels"><span>₹{minPrice.toLocaleString("en-IN")}</span><span>₹{maxPrice.toLocaleString("en-IN")}</span></div><input className="range-input" type="range" min="5000" max="150000" step="5000" value={maxPrice} onChange={(e) => setMaxPrice(Number(e.target.value))} aria-label="Maximum price"/><div className="range-extremes"><span>₹5k</span><span>₹1.5L+</span></div></FilterGroup><FilterGroup title="Brand"><div className="check-list">{brands.map((brand) => <label key={brand}><input type="checkbox" checked={selectedBrands.includes(brand)} onChange={() => toggleBrand(brand)} /><span className="custom-check" />{brand}<small>{brand === "Samsung" ? "24" : brand === "Apple" ? "18" : "12"}</small></label>)}</div></FilterGroup><FilterGroup title="RAM"><div className="filter-chips compact">{specs.map((option) => <button key={option}>{option}</button>)}</div></FilterGroup><FilterGroup title="Storage"><div className="filter-chips compact"><button>128 GB+</button><button>256 GB+</button><button>512 GB+</button></div></FilterGroup><FilterGroup title="Battery"><div className="filter-chips compact"><button>4000 mAh+</button><button>5000 mAh+</button></div></FilterGroup><FilterGroup title="Camera"><div className="filter-chips compact"><button>48 MP+</button><button>100 MP+</button></div></FilterGroup><FilterGroup title="Display"><div className="select-wrap"><select aria-label="Minimum refresh rate"><option>Any refresh rate</option><option>90 Hz+</option><option>120 Hz+</option></select><span>⌄</span></div></FilterGroup><FilterGroup title="Operating system"><div className="filter-chips compact"><button>Android</button><button>iOS</button></div></FilterGroup><button className="apply-filters">Show 64 phones <span>↗</span></button></aside><section className="results-panel"><div className="results-toolbar"><div><span className="results-count">64 phones</span><span className="results-context">matching your search</span></div><div className="sort-control"><label htmlFor="sort">Sort by</label><select id="sort"><option>Best match</option><option>Price: low to high</option><option>Price: high to low</option><option>Top rated</option></select><span>⌄</span></div></div><div className="active-filters"><span className="filter-pill">Great camera <button aria-label="Remove filter">×</button></span><span className="filter-pill">₹15k – ₹1.5L <button aria-label="Remove filter">×</button></span><button onClick={clear}>Clear all</button></div><div className="results-list">{results.map((phone) => <article className="result-card" key={phone.name}><div className={`result-phone ${phone.tone}`}><span className="mini-device"><i /><i /><i /></span></div><div className="result-details"><span className="result-brand">{phone.brand} <span>·</span> <em>{phone.score}</em></span><h3>{phone.name}</h3><div className="result-specs">{phone.specs.map((spec) => <span key={spec}>{spec}</span>)}</div><div className="result-actions"><button className="text-action">♡ Save</button><button className="text-action">□ Compare</button></div></div><div className="result-price"><span>Starting at</span><b>{phone.price}</b><button>View phone <span>↗</span></button></div></article>)}</div><p className="dataset-note">Preview cards for design purposes. Actual results and match scores will be calculated from your CSV catalog.</p></section></div></main>;
+  const [params, setParams] = useSearchParams();
+  const initialCategory = params.get("category") || "";
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
+  const [selectedDisplays, setSelectedDisplays] = useState<string[]>([]);
+  const [priceFloor, setPriceFloor] = useState(minCatalogPrice);
+  const [priceCap, setPriceCap] = useState(maxCatalogPrice);
+  const [minDisplaySize, setMinDisplaySize] = useState(0);
+  const [maxWeight, setMaxWeight] = useState(weightBounds.max);
+  const [minRating, setMinRating] = useState(0);
+  const [activeCategory, setActiveCategory] = useState(() => categories.find((item) => categoryIds[item] === initialCategory) || "All phones");
+  const [minRam, setMinRam] = useState(0);
+  const [minStorage, setMinStorage] = useState(0);
+  const [minBattery, setMinBattery] = useState(0);
+  const [minCamera, setMinCamera] = useState(0);
+  const [sort, setSort] = useState("match");
+  const [visibleCount, setVisibleCount] = useState(24);
+  const [compareMessage, setCompareMessage] = useState("");
+  const { savedIds, compareIds, toggleSaved, toggleCompare } = usePhoneActions();
+  const query = (params.get("q") || "").trim().toLocaleLowerCase();
+
+  const filteredPhones = useMemo(() => {
+    const categoryId = categoryIds[activeCategory];
+    const found = phones.filter((phone) => {
+      const text = `${phone.name} ${phone.brand} ${phone.model} ${phone.processor || ""}`.toLocaleLowerCase();
+      return (!query || text.includes(query))
+        && (activeCategory === "All phones" || Boolean(categoryId && phone.categories.includes(categoryId as Phone["categories"][number])))
+        && (phone.price !== null && phone.price >= priceFloor && phone.price <= priceCap)
+        && (!selectedBrands.length || selectedBrands.includes(phone.brand))
+        && (!selectedDisplays.length || (phone.displayType !== null && selectedDisplays.includes(phone.displayType)))
+        && (!minRam || meetsThreshold(phone.ramGb, minRam))
+        && (!minStorage || meetsThreshold(phone.storageGb, minStorage))
+        && (!minBattery || meetsThreshold(phone.batteryMah, minBattery))
+        && (!minCamera || meetsThreshold(phone.cameraMainMp, minCamera))
+        && (!minDisplaySize || meetsThreshold(phone.displaySizeIn, minDisplaySize))
+        && (phone.weightG !== null && phone.weightG <= maxWeight)
+        && (!minRating || meetsThreshold(phone.rating, minRating));
+    });
+    return found.sort((left, right) => {
+      if (sort === "price-asc") return (left.price ?? Infinity) - (right.price ?? Infinity);
+      if (sort === "price-desc") return (right.price ?? -Infinity) - (left.price ?? -Infinity);
+      if (sort === "rating") return (right.rating ?? 0) - (left.rating ?? 0);
+      return (right.rating ?? 0) - (left.rating ?? 0) || (left.price ?? Infinity) - (right.price ?? Infinity);
+    });
+  }, [activeCategory, maxWeight, minBattery, minCamera, minDisplaySize, minRam, minRating, minStorage, priceCap, priceFloor, query, selectedBrands, selectedDisplays, sort]);
+
+  function toggleBrand(brand: string) { setSelectedBrands((current) => current.includes(brand) ? current.filter((value) => value !== brand) : [...current, brand]); setVisibleCount(24); }
+  function clear() { setParams({}); setSelectedBrands([]); setSelectedDisplays([]); setPriceFloor(minCatalogPrice); setPriceCap(maxCatalogPrice); setActiveCategory("All phones"); setMinRam(0); setMinStorage(0); setMinBattery(0); setMinCamera(0); setMinDisplaySize(0); setMaxWeight(weightBounds.max); setMinRating(0); setVisibleCount(24); }
+  function addToCompare(id: string) {
+    const success = toggleCompare(id);
+    setCompareMessage(success ? "Comparison selection updated." : "Two phones are already selected. Remove one before adding another.");
+  }
+  const hasFilters = activeCategory !== "All phones" || selectedBrands.length > 0 || selectedDisplays.length > 0 || priceFloor > minCatalogPrice || priceCap < maxCatalogPrice || minRam > 0 || minStorage > 0 || minBattery > 0 || minCamera > 0 || minDisplaySize > 0 || maxWeight < weightBounds.max || minRating > 0 || Boolean(query);
+
+  return <main className="page-wrap search-page"><div className="page-heading search-heading"><div><span className="eyebrow">MADE FOR YOUR MUST-HAVES</span><h1>Advanced search</h1><p className="lead">Search and filter all {phones.length} phones from the supplied catalog.</p></div>{compareIds.length > 0 && <Link className="saved-filter-button" to="/compare">⇄ Compare {compareIds.length}/2</Link>}</div><div className="search-layout"><aside className="filters-panel"><div className="filters-title"><div><h2>Filters</h2><span>Make it yours</span></div><button onClick={clear}>Clear all</button></div>
+    <FilterGroup title="Category"><div className="filter-chips">{categories.map((item) => <button onClick={() => { setActiveCategory(item); setVisibleCount(24); }} className={activeCategory === item ? "selected" : ""} key={item}>{item}</button>)}</div></FilterGroup>
+    <FilterGroup title="Catalog price range"><div className="range-labels"><span>{formatPrice(priceFloor)}</span><span>{formatPrice(priceCap)}</span></div><input className="range-input" type="range" min={minCatalogPrice} max={maxCatalogPrice} step="10" value={priceFloor} onChange={(event) => { setPriceFloor(Math.min(Number(event.target.value), priceCap)); setVisibleCount(24); }} aria-label="Minimum catalog price"/><input className="range-input" type="range" min={minCatalogPrice} max={maxCatalogPrice} step="10" value={priceCap} onChange={(event) => { setPriceCap(Math.max(Number(event.target.value), priceFloor)); setVisibleCount(24); }} aria-label="Maximum catalog price"/><div className="range-extremes"><span>Source price units</span><span>{formatPrice(maxCatalogPrice)}</span></div></FilterGroup>
+    <FilterGroup title="Brand"><div className="check-list">{catalogBrands.map((brand) => <label key={brand}><input type="checkbox" checked={selectedBrands.includes(brand)} onChange={() => toggleBrand(brand)} /><span className="custom-check" />{brand}<small>{phones.filter((phone) => phone.brand === brand).length}</small></label>)}</div></FilterGroup>
+    <FilterGroup title="RAM"><div className="filter-chips compact">{[4, 6, 8, 12].map((size) => <button key={size} className={minRam === size ? "selected" : ""} onClick={() => { setMinRam(minRam === size ? 0 : size); setVisibleCount(24); }}>{size} GB+</button>)}</div></FilterGroup>
+    <FilterGroup title="Storage"><div className="filter-chips compact">{[128, 256, 512].map((size) => <button key={size} className={minStorage === size ? "selected" : ""} onClick={() => { setMinStorage(minStorage === size ? 0 : size); setVisibleCount(24); }}>{size} GB+</button>)}</div></FilterGroup>
+    <FilterGroup title="Battery"><div className="filter-chips compact">{[4000, 5000, 6000].map((size) => <button key={size} className={minBattery === size ? "selected" : ""} onClick={() => { setMinBattery(minBattery === size ? 0 : size); setVisibleCount(24); }}>{size.toLocaleString()} mAh+</button>)}</div></FilterGroup>
+    <FilterGroup title="Main camera"><div className="filter-chips compact">{[12, 24, 48, 100].map((size) => <button key={size} className={minCamera === size ? "selected" : ""} onClick={() => { setMinCamera(minCamera === size ? 0 : size); setVisibleCount(24); }}>{size} MP+</button>)}</div></FilterGroup>
+    <FilterGroup title="Display type"><div className="filter-chips compact">{displayTypes.map((type) => <button key={type} className={selectedDisplays.includes(type) ? "selected" : ""} onClick={() => { setSelectedDisplays((current) => current.includes(type) ? current.filter((item) => item !== type) : [...current, type]); setVisibleCount(24); }}>{type}</button>)}</div></FilterGroup>
+    <FilterGroup title="Minimum display size"><div className="filter-chips compact">{[6, 6.5, 7].map((size) => <button key={size} className={minDisplaySize === size ? "selected" : ""} onClick={() => { setMinDisplaySize(minDisplaySize === size ? 0 : size); setVisibleCount(24); }}>{size}″+</button>)}</div></FilterGroup>
+    <FilterGroup title="Maximum weight"><div className="range-labels"><span>Any listed weight</span><span>{maxWeight} g</span></div><input className="range-input" type="range" min={weightBounds.min} max={weightBounds.max} step="1" value={maxWeight} onChange={(event) => { setMaxWeight(Number(event.target.value)); setVisibleCount(24); }} aria-label="Maximum phone weight"/></FilterGroup>
+    <FilterGroup title="Minimum rating"><div className="filter-chips compact">{[3.5, 4, 4.5].map((rating) => <button key={rating} className={minRating === rating ? "selected" : ""} onClick={() => { setMinRating(minRating === rating ? 0 : rating); setVisibleCount(24); }}>{rating.toFixed(1)} ★+</button>)}</div></FilterGroup>
+  </aside><section className="results-panel"><div className="results-toolbar"><div><span className="results-count">{filteredPhones.length} phones</span><span className="results-context">matching your filters</span></div><div className="sort-control"><label htmlFor="sort">Sort by</label><select id="sort" value={sort} onChange={(event) => setSort(event.target.value)}><option value="match">Top rated</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option><option value="rating">Rating</option></select><span>⌄</span></div></div>
+    {hasFilters && <div className="active-filters">{activeCategory !== "All phones" && <span className="filter-pill">{activeCategory}</span>}{query && <span className="filter-pill">Search: {params.get("q")}</span>}{selectedBrands.map((brand) => <span className="filter-pill" key={brand}>{brand}</span>)}{selectedDisplays.map((type) => <span className="filter-pill" key={type}>{type}</span>)}{minRam > 0 && <span className="filter-pill">RAM {minRam} GB+</span>}{minStorage > 0 && <span className="filter-pill">Storage {minStorage} GB+</span>}{minBattery > 0 && <span className="filter-pill">Battery {minBattery} mAh+</span>}{minCamera > 0 && <span className="filter-pill">Camera {minCamera} MP+</span>}{minDisplaySize > 0 && <span className="filter-pill">Display {minDisplaySize}″+</span>}{minRating > 0 && <span className="filter-pill">Rating {minRating} ★+</span>}{(priceFloor > minCatalogPrice || priceCap < maxCatalogPrice) && <span className="filter-pill">Price {formatPrice(priceFloor)}–{formatPrice(priceCap)}</span>}<button onClick={clear}>Clear filters</button></div>}
+    {compareMessage && <p className="settings-status" role="status">{compareMessage}</p>}
+    <div className="results-list">{filteredPhones.slice(0, visibleCount).map((phone, index) => <article className="result-card" key={phone.id}><div className={`result-phone ${["rose", "sand", "lavender"][index % 3]}`}><span className="mini-device"><i /><i /><i /></span></div><div className="result-details"><span className="result-brand">{phone.brand} <span>·</span> <em>{formatRating(phone.rating)} rating</em></span><h3>{phone.model}</h3><div className="result-specs">{phoneSpecs(phone).map((spec) => <span key={spec}>{spec}</span>)}{phone.displaySizeIn !== null && <span>{phone.displaySizeIn}″ display</span>}{phone.processor && <span>{formatProcessor(phone.processor)}</span>}</div><div className="result-actions"><button className="text-action" aria-pressed={savedIds.includes(phone.id)} onClick={() => toggleSaved(phone.id)}>{savedIds.includes(phone.id) ? "♥ Saved" : "♡ Save"}</button><button className="text-action" aria-pressed={compareIds.includes(phone.id)} onClick={() => addToCompare(phone.id)}>{compareIds.includes(phone.id) ? "✓ Selected" : "＋ Compare"}</button></div></div><div className="result-price"><span>Catalog price</span><b>{formatPrice(phone.price)}</b><span className="result-catalog-rating">★ {formatRating(phone.rating)}</span></div></article>)}</div>
+    {!filteredPhones.length && <div className="empty-saved-state"><h3>No phones match these filters</h3><p>Try a wider price range or clear some filters.</p><button className="button-primary" onClick={clear}>Clear filters</button></div>}
+    {filteredPhones.length > visibleCount && <button className="outline-button" onClick={() => setVisibleCount((count) => count + 24)}>Show more phones ({filteredPhones.length - visibleCount} remaining)</button>}
+    <p className="dataset-note">Showing normalized records from the supplied workbook. Prices use the source catalog’s numeric values; currency is not specified in the source.</p>
+  </section></div></main>;
 }

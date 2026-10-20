@@ -13,6 +13,7 @@ import { PrivacyPage } from "./pages/PrivacyPage";
 import { TermsPage } from "./pages/TermsPage";
 import { LatestUpdatesDialog } from "./components/LatestUpdatesDialog";
 import { UserPreferencesProvider } from "./auth/UserPreferencesProvider";
+import { PhoneActionsProvider } from "./auth/PhoneActionsProvider";
 
 function AppShell() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -72,5 +73,5 @@ function AppShell() {
 }
 
 export default function App() {
-  return <AuthProvider><UserPreferencesProvider><AppShell /></UserPreferencesProvider></AuthProvider>;
+  return <AuthProvider><UserPreferencesProvider><PhoneActionsProvider><AppShell /></PhoneActionsProvider></UserPreferencesProvider></AuthProvider>;
 }

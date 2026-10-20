@@ -1,15 +1,66 @@
-import { useState } from "react";
-const phoneSpecs = [
-  ["Price", "₹1,09,999", "₹1,29,999", "Google Pixel 9 Pro"],
-  ["Processor", "Tensor G4", "Snapdragon 8 Gen 3", "Galaxy S24 Ultra"],
-  ["RAM", "16 GB", "12 GB", "Google Pixel 9 Pro"],
-  ["Storage", "256 GB", "256 GB", "Tie"],
-  ["Main camera", "50 MP", "200 MP", "Galaxy S24 Ultra"],
-  ["Battery", "4700 mAh", "5000 mAh", "Galaxy S24 Ultra"],
-  ["Display", "6.3” · 120 Hz", "6.8” · 120 Hz", "Tie"],
-  ["OS updates", "7 years", "7 years", "Tie"],
-] as const;
+import { Link } from "react-router-dom";
+import { usePhoneActions } from "../auth/PhoneActionsProvider";
+import { useUserPreferences } from "../auth/UserPreferencesProvider";
+import { formatPrice, formatProcessor, formatRating, phoneById, phones, preferenceMatchCount } from "../data/catalog";
+import type { Phone } from "../types/phone";
+
+type Row = { label: string; left: string; right: string; winner?: "left" | "right" };
+
+function value(value: number | string | null | undefined, suffix = "") {
+  return value === null || value === undefined || value === "" ? "Not listed" : `${value}${suffix}`;
+}
+
+function rowsFor(left: Phone, right: Phone): Row[] {
+  const numericRows = [
+    { label: "Price (catalog units)", left: left.price, right: right.price, suffix: "", lower: true },
+    { label: "Rating", left: left.rating, right: right.rating, suffix: " / 5", lower: false },
+    { label: "RAM", left: left.ramGb, right: right.ramGb, suffix: " GB", lower: false },
+    { label: "Storage", left: left.storageGb, right: right.storageGb, suffix: " GB", lower: false },
+    { label: "Battery", left: left.batteryMah, right: right.batteryMah, suffix: " mAh", lower: false },
+  ];
+  const rows: Row[] = numericRows.map((row) => ({
+    label: row.label,
+    left: row.label.startsWith("Price") ? formatPrice(row.left) : value(row.left, row.suffix),
+    right: row.label.startsWith("Price") ? formatPrice(row.right) : value(row.right, row.suffix),
+    winner: row.left === null || row.right === null || row.left === row.right ? undefined : ((row.lower ? row.left < row.right : row.left > row.right) ? "left" : "right"),
+  }));
+  rows.push(
+    { label: "Main camera", left: value(left.cameraMainMp, " MP"), right: value(right.cameraMainMp, " MP") },
+    { label: "Display size", left: value(left.displaySizeIn, "″"), right: value(right.displaySizeIn, "″") },
+    { label: "Display type", left: value(left.displayType), right: value(right.displayType) },
+    { label: "Weight", left: value(left.weightG, " g"), right: value(right.weightG, " g") },
+    { label: "Processor", left: formatProcessor(left.processor), right: formatProcessor(right.processor) },
+  );
+  return rows;
+}
+
 export function ComparePage() {
-  const [first, setFirst] = useState("Google Pixel 9 Pro"); const [second, setSecond] = useState("Samsung Galaxy S24 Ultra");
-  return <main className="page-wrap compare-page"><div className="page-heading"><span className="eyebrow">THE DETAILS, SIDE BY SIDE</span><h1>Compare your picks.</h1><p className="lead">A clearer view of what each phone brings to your everyday.</p></div><div className="compare-topline"><div><span className="compare-count">YOUR COMPARISON</span><h2>Which one feels right?</h2></div><button className="outline-button">＋ Add a phone</button></div><div className="compare-products"><article className="compare-product"><div className="compare-device rose"><i /><i /><i /></div><button className="remove-compare" aria-label="Remove first phone">×</button><span className="compare-brand">GOOGLE</span><h3>Pixel 9 Pro</h3><b className="compare-product-price">₹1,09,999</b><div className="compare-select"><label htmlFor="phone-a">CHANGE PHONE</label><select id="phone-a" value={first} onChange={(e) => setFirst(e.target.value)}><option>Google Pixel 9 Pro</option><option>Apple iPhone 16 Pro</option><option>OnePlus 12</option></select></div></article><div className="versus-mark">VS</div><article className="compare-product"><div className="compare-device sand"><i /><i /><i /></div><button className="remove-compare" aria-label="Remove second phone">×</button><span className="compare-brand">SAMSUNG</span><h3>Galaxy S24 Ultra</h3><b className="compare-product-price">₹1,29,999</b><div className="compare-select"><label htmlFor="phone-b">CHANGE PHONE</label><select id="phone-b" value={second} onChange={(e) => setSecond(e.target.value)}><option>Samsung Galaxy S24 Ultra</option><option>Google Pixel 9 Pro</option><option>Apple iPhone 16 Pro</option></select></div></article></div><section className="fit-summary"><div className="fit-icon">✦</div><div><span className="eyebrow">YOUR BEST FIT, AT A GLANCE</span><h2>Pixel 9 Pro edges ahead for your priorities.</h2><p>It costs less and offers more memory. The Galaxy brings a bigger battery and a higher-resolution main camera.</p></div><div className="fit-score"><b>92<small>%</small></b><span>your fit</span></div></section><section className="spec-table"><div className="spec-table-heading"><div><span className="eyebrow">THE FULL PICTURE</span><h2>Compare specifications</h2></div><button className="text-link">All specs <span>⌄</span></button></div><div className="spec-header"><span>SPECIFICATION</span><span>GOOGLE PIXEL 9 PRO</span><span>SAMSUNG GALAXY S24 ULTRA</span></div>{phoneSpecs.map(([label, left, right, winner]) => <div className="spec-row" key={label}><b>{label}</b><span className={winner === "Google Pixel 9 Pro" ? "spec-winner" : ""}>{left}{winner === "Google Pixel 9 Pro" && <i>Best for you</i>}</span><span className={winner === "Galaxy S24 Ultra" ? "spec-winner" : ""}>{right}{winner === "Galaxy S24 Ultra" && <i>Best for you</i>}</span></div>)}</section><p className="dataset-note">Illustrative comparison for the UI preview. Specifications and the fit summary will be generated from your phone dataset and chosen priorities.</p></main>;
+  const { compareIds, setCompareIds } = usePhoneActions();
+  const { preferences } = useUserPreferences();
+  const left = compareIds[0] ? phoneById.get(compareIds[0]) : undefined;
+  const right = compareIds[1] ? phoneById.get(compareIds[1]) : undefined;
+
+  function updateSlot(slot: 0 | 1, id: string) {
+    const next = [...compareIds];
+    if (!id) next.splice(slot, 1);
+    else next[slot] = id;
+    setCompareIds(next.filter(Boolean));
+  }
+
+  const leftMatches = left ? preferenceMatchCount(left, preferences.categories) : 0;
+  const rightMatches = right ? preferenceMatchCount(right, preferences.categories) : 0;
+  const bestFit = left && right
+    ? (leftMatches !== rightMatches ? (leftMatches > rightMatches ? left : right)
+      : (left.rating ?? 0) !== (right.rating ?? 0) ? ((left.rating ?? 0) > (right.rating ?? 0) ? left : right)
+        : (left.price ?? Infinity) <= (right.price ?? Infinity) ? left : right)
+    : undefined;
+  const fitReason = preferences.categories.length
+    ? `${bestFit?.name} matches ${Math.max(leftMatches, rightMatches)} of your ${preferences.categories.length} selected priorities${leftMatches === rightMatches ? ` and is compared using rating${left?.rating === right?.rating ? " and catalog price" : ""} as a tie-breaker` : ""}.`
+    : `${bestFit?.name} ranks first by rating${left?.rating === right?.rating ? " and catalog price" : ""}. Set priorities in Settings to personalize this result.`;
+
+  return <main className="page-wrap compare-page"><div className="page-heading"><span className="eyebrow">THE DETAILS, SIDE BY SIDE</span><h1>Compare your picks.</h1><p className="lead">Choose two phones from the supplied catalog to compare their recorded specifications.</p></div>
+    <div className="compare-topline"><div><span className="compare-count">YOUR COMPARISON</span><h2>{compareIds.length} of 2 phones selected</h2></div><Link className="outline-button" to="/search">＋ Find a phone</Link></div>
+    <div className="compare-products">{([left, right] as const).map((phone, slot) => <article className="compare-product" key={slot}><div className={`compare-device ${slot === 0 ? "rose" : "sand"}`}><i /><i /><i /></div>{phone && <button className="remove-compare" aria-label={`Remove ${phone.name}`} onClick={() => updateSlot(slot as 0 | 1, "")}>×</button>}<span className="compare-brand">{phone?.brand || `PHONE ${slot + 1}`}</span><h3>{phone?.model || "Choose a phone"}</h3>{phone && <b className="compare-product-price">{formatPrice(phone.price)}</b>}<div className="compare-select"><label htmlFor={`phone-${slot}`}>SELECT FROM CATALOG</label><select id={`phone-${slot}`} value={phone?.id || ""} onChange={(event) => updateSlot(slot as 0 | 1, event.target.value)}><option value="">Choose a phone…</option>{phones.map((item) => <option key={item.id} value={item.id} disabled={item.id === (slot === 0 ? right?.id : left?.id)}>{item.name}</option>)}</select></div></article>)}</div>
+    {left && right ? <><section className="fit-summary"><div className="fit-icon">✦</div><div><span className="eyebrow">BEST SUITED FROM YOUR SELECTIONS</span><h2>{bestFit?.name}</h2><p>{fitReason}</p></div><div className="fit-score"><b>{preferences.categories.length ? `${bestFit === left ? leftMatches : rightMatches}/${preferences.categories.length}` : formatRating(bestFit?.rating ?? null)}</b><span>{preferences.categories.length ? "priority matches" : "top rated"}</span></div></section><section className="spec-table"><div className="spec-table-heading"><div><span className="eyebrow">THE FULL PICTURE</span><h2>Compare specifications</h2></div></div><div className="spec-header"><span>SPECIFICATION</span><span>{left.name}</span><span>{right.name}</span></div>{rowsFor(left, right).map((row) => <div className="spec-row" key={row.label}><b>{row.label}</b><span className={row.winner === "left" ? "spec-winner" : ""}>{row.left}{row.winner === "left" && <i>{row.label.startsWith("Price") ? "Lower price" : `Higher ${row.label.toLowerCase()}`}</i>}</span><span className={row.winner === "right" ? "spec-winner" : ""}>{row.right}{row.winner === "right" && <i>{row.label.startsWith("Price") ? "Lower price" : `Higher ${row.label.toLowerCase()}`}</i>}</span></div>)}</section><p className="dataset-note">Price currency and some measurement units are not specified in the source workbook. Numeric price comparison uses the dataset values as provided.</p></> : <div className="empty-saved-state"><h3>Select two phones to compare</h3><p>Your selections are saved on this device while you browse.</p><Link className="button-primary" to="/search">Browse catalog <span>↗</span></Link></div>}
+  </main>;
 }

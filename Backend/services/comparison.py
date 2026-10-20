@@ -6,8 +6,8 @@ def compare_phones(first_phone, second_phone):
     if first_phone.get("id") == second_phone.get("id"):
         raise ValueError("Choose two different phones to compare.")
     fields = (
-        "price", "ram_gb", "storage_gb", "battery_mah", "display_size_in",
-        "refresh_rate_hz", "camera_main_mp", "processor", "os",
+        "price", "rating", "ramGb", "storageGb", "batteryMah", "displaySizeIn",
+        "displayType", "cameraMainMp", "weightG", "processor", "os",
     )
     return {
         field: {"first": first_phone.get(field), "second": second_phone.get(field)}

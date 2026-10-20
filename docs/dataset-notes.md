@@ -1,6 +1,6 @@
 # Phone catalog notes and import contract
 
-The supplied source is `Datasets/sic_mobile_spec_PJ1.xlsx`, a single-sheet Excel workbook with 413 phone records and 11 columns. Keep the original file unchanged. The backend should normalize source-specific headers into a canonical phone model; do not couple the frontend to raw source column names.
+The supplied source is `Datasets/sic_mobile_spec_PJ1.xlsx`, a single-sheet Excel workbook with 413 phone records and 11 columns. Keep the original file unchanged. `scripts/build_phone_catalog.py` normalizes source-specific headers into the shared phone model; do not couple the frontend to raw source column names.
 
 ## Source fields and data check
 
@@ -18,23 +18,23 @@ The supplied source is `Datasets/sic_mobile_spec_PJ1.xlsx`, a single-sheet Excel
 | `weight` | Numeric values (138–234); confirm the unit is grams. |
 | `processor` | Text values with inconsistent compact naming; normalize whitespace/casing for search without changing the source. |
 
-There are no blank cells or duplicate names/full rows. Before ranking by price or showing formatted specs, confirm price currency and the suspected units above. Treat the zero camera value as unknown until verified. The workbook is currently not loaded by the UI; current phone cards are still placeholder examples.
+There are no blank cells or duplicate names/full rows. The app now uses a generated normalized JSON catalog derived from the workbook; the original workbook remains unchanged. Ranking uses the numeric price values as supplied and displays them without a currency symbol until the currency is confirmed. The camera value `0` is normalized to unknown. RAM, storage, battery, camera, display, weight, and processor drive the actual search and comparison UI.
 
 ## Suggested canonical fields
 
 | Field | Meaning |
 | --- | --- |
-| `id` | Stable unique identifier (or generated from a stable source key) |
-| `brand`, `model` | Display name |
+| `id` | Stable unique identifier generated from the source phone name |
+| `name`, `brand`, `model` | Source name plus first-token brand and remaining model name |
 | `price` | Numeric price in a single documented currency |
-| `category` | Optional category labels |
-| `ram_gb`, `storage_gb` | Numeric memory/storage values |
-| `battery_mah` | Battery capacity |
-| `display_size_in` | Screen diagonal |
-| `refresh_rate_hz` | Display refresh rate |
-| `camera_main_mp` | Main camera megapixels |
-| `processor` | Chipset name |
-| `os` | Operating system |
-| `image_url` | Optional externally hosted image URL |
+| `categories` | Inferred gaming, battery, camera, budget, and flagship tags |
+| `ramGb`, `storageGb` | Numeric memory/storage values |
+| `batteryMah` | Battery capacity |
+| `displaySizeIn`, `displayType` | Display diagonal and source type |
+| `cameraMainMp` | Main camera megapixels; zero mapped to null |
+| `weightG` | Phone weight |
+| `processor` | Source chipset string, formatted for display |
+| `rating` | Source rating |
+| `os`, `imageUrl` | Null because the source workbook contains no such fields |
 
-These are recommendations, not a requirement that the incoming CSV use these exact headers. Confirm units, missing values, duplicate phones, and currency before implementing the mapping. Avoid inferring absent specs as zero; represent unknown values as null and explain unavailable comparisons in the UI.
+These are mapping notes, not a requirement that a future CSV use exact headers. The importer maps the current workbook fields into the canonical names above. It treats absent or unparseable values as null, and storage `1TB` as 1024 GB. Confirm the currency and suspected measurement units before publishing those labels as authoritative.

@@ -11,3 +11,5 @@ npm run dev
 ```
 
 Configure the Firebase web app values in `.env`. In the Firebase console, enable the required Authentication providers and create a Cloud Firestore database. From the project root, deploy the included owner-only preference rules with `firebase deploy --only firestore:rules`. Never add private service credentials to frontend variables.
+
+The phone discovery, search, and comparison screens use `src/data/phones.json`, generated from `Datasets/sic_mobile_spec_PJ1.xlsx`. Regenerate it from the repository root after updating the workbook with `python scripts/build_phone_catalog.py` (requires `openpyxl`).

@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - "Frontend/**"
+      - "Datasets/sic_mobile_spec_PJ1.xlsx"
+      - "scripts/build_phone_catalog.py"
       - ".github/workflows/deploy-pages.yml"
   workflow_dispatch:
 
@@ -23,6 +25,14 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Regenerate the normalized phone catalog
+        run: |
+          python -m pip install openpyxl
+          python scripts/build_phone_catalog.py
       - name: Set up Node
         uses: actions/setup-node@v4
         with:

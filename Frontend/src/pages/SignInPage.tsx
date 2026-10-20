@@ -46,10 +46,8 @@ export function SignInPage() {
         </div>
         <p className="auth-legal">By continuing, you agree to our <Link to="/terms">Terms</Link> and <Link to="/privacy">Privacy Policy</Link>.</p>
       </section>
-      <aside className="auth-art" aria-label="A preview of phones you can discover with ELYVEX">
-        <div className="auth-art-copy"><span>FIND YOUR NEXT FAVORITE</span><h2>Made for the way you move.</h2><p>Compare the details that matter and find your perfect match.</p></div>
-        <img className="auth-phone-illustration" src={`${import.meta.env.BASE_URL}assets/phone-hero.svg`} alt="Two crimson and graphite smartphones" />
-        <div className="auth-art-brand"><b>ELYVEX</b><span>BETTER CHOICES BEGIN HERE</span></div>
+      <aside className="auth-art" aria-label="Crimson smartphone against a red abstract background">
+        <img className="auth-phone-illustration" src={`${import.meta.env.BASE_URL}assets/phone-hero.svg`} alt="A crimson smartphone" />
       </aside>
     </main>
   );
