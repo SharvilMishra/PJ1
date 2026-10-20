@@ -1,0 +1,22 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /userPreferences/{userId} {
+      function isOwner() {
+        return request.auth != null && request.auth.uid == userId;
+      }
+
+      function validPreferences() {
+        return request.resource.data.keys().hasOnly(['categories', 'updatedAt'])
+          && request.resource.data.categories is list
+          && request.resource.data.categories.size() <= 5
+          && request.resource.data.categories.hasOnly(['gaming', 'battery', 'camera', 'budget', 'flagship'])
+          && request.resource.data.updatedAt == request.time;
+      }
+
+      allow read: if isOwner();
+      allow create, update: if isOwner() && validPreferences();
+      allow delete: if isOwner();
+    }
+  }
+}
