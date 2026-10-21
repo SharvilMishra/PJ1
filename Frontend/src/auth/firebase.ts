@@ -3,17 +3,17 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const config = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  // Firebase web configuration is public client configuration. Keep access
+  // protected with Firebase Authentication and Firestore Security Rules.
+  apiKey: "AIzaSyAiDpUtr6HyE_7J-sj22jmFcB3u6bQ3bxI",
+  authDomain: "ignite-1df6e.firebaseapp.com",
+  projectId: "ignite-1df6e",
+  storageBucket: "ignite-1df6e.firebasestorage.app",
+  messagingSenderId: "233569488556",
+  appId: "1:233569488556:web:4db65328486845f9559909",
 };
 
-export const firebaseConfigured = Boolean(config.apiKey && config.authDomain && config.projectId && config.appId);
-export const firebaseApp = firebaseConfigured
-  ? getApps().length ? getApp() : initializeApp(config)
-  : null;
-export const auth = firebaseApp ? getAuth(firebaseApp) : null;
-export const db = firebaseApp ? getFirestore(firebaseApp) : null;
+export const firebaseConfigured = true;
+export const firebaseApp = getApps().length ? getApp() : initializeApp(config);
+export const auth = getAuth(firebaseApp);
+export const db = getFirestore(firebaseApp);

@@ -46,8 +46,8 @@ export function SignInPage() {
         </div>
         <p className="auth-legal">By continuing, you agree to our <Link to="/terms">Terms</Link> and <Link to="/privacy">Privacy Policy</Link>.</p>
       </section>
-      <aside className="auth-art" aria-label="Crimson smartphone against a red abstract background">
-        <img className="auth-phone-illustration" src={`${import.meta.env.BASE_URL}assets/phone-hero.svg`} alt="A crimson smartphone" />
+      <aside className="auth-art" aria-label="Crimson smartphone against a dark red background">
+        <img className="auth-phone-photo" src={`${import.meta.env.BASE_URL}assets/login-phone.png`} alt="A glossy crimson smartphone with a triple camera" />
       </aside>
     </main>
   );
