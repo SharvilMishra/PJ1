@@ -56,21 +56,47 @@ const preferenceBounds = Object.fromEntries(Object.values(preferenceMetric).map(
   return [field, { min: Math.min(...values), max: Math.max(...values) }];
 })) as Record<(typeof preferenceMetric)[PreferenceCategory]["field"], { min: number; max: number }>;
 
-/** Equal-weight average of selected category scores; each category combines its catalog tag and normalized spec. */
-export function recommendationScore(phone: Phone, selected: string[]): number {
-  if (!selected.length) return 0;
-  const active = selected.filter((category): category is PreferenceCategory =>
+export type RecommendationContribution = {
+  category: PreferenceCategory;
+  score: number;
+  categoryMatch: boolean;
+  metricScore: number | null;
+  metricLabel: string;
+};
+
+const preferenceMetricLabels: Record<PreferenceCategory, string> = {
+  gaming: "RAM",
+  battery: "Battery capacity",
+  camera: "Main camera",
+  budget: "Price",
+  flagship: "Rating",
+};
+
+/** Exposes each equally weighted priority's score and whether its key spec is absent. */
+export function recommendationBreakdown(phone: Phone, selected: string[]): RecommendationContribution[] {
+  return selected.filter((category): category is PreferenceCategory =>
     (preferenceCategories as readonly string[]).includes(category),
-  );
-  if (!active.length) return 0;
-  const scores = active.map((category) => {
+  ).map((category) => {
     const { field, higherIsBetter } = preferenceMetric[category];
     const { min, max } = preferenceBounds[field];
     const raw = phone[field];
     const hasMetric = typeof raw === "number" && Number.isFinite(raw) && max > min;
-    const metricScore = hasMetric ? ((raw - min) / (max - min)) * (higherIsBetter ? 1 : -1) + (higherIsBetter ? 0 : 1) : null;
-    const tagScore = phone.categories.includes(category) ? 1 : 0;
-    return metricScore === null ? tagScore * 100 : (tagScore * 0.5 + metricScore * 0.5) * 100;
+    const metricScore = hasMetric
+      ? ((raw - min) / (max - min)) * (higherIsBetter ? 1 : -1) + (higherIsBetter ? 0 : 1)
+      : null;
+    const categoryMatch = phone.categories.includes(category);
+    return {
+      category,
+      score: metricScore === null ? (categoryMatch ? 100 : 0) : ((categoryMatch ? 0.5 : 0) + metricScore * 0.5) * 100,
+      categoryMatch,
+      metricScore,
+      metricLabel: preferenceMetricLabels[category],
+    };
   });
-  return scores.reduce((sum, score) => sum + score, 0) / scores.length;
+}
+
+/** Equal-weight average of selected category scores; each category combines its catalog tag and normalized spec. */
+export function recommendationScore(phone: Phone, selected: string[]): number {
+  const breakdown = recommendationBreakdown(phone, selected);
+  return breakdown.length ? breakdown.reduce((sum, item) => sum + item.score, 0) / breakdown.length : 0;
 }
