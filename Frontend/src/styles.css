@@ -252,3 +252,33 @@ body:has(.auth-page){background:#101015}
 }
 @keyframes filter-drawer-in{from{transform:translateY(18px);opacity:.75}to{transform:translateY(0);opacity:1}}
 @media(prefers-reduced-motion:reduce){.filters-panel.mobile-open{animation:none}}
+
+.persona-fields,.persona-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 18px}
+.persona-fields{grid-column:2;align-self:start;margin-top:16px}
+.persona-fields label,.persona-controls label{display:grid;gap:8px;color:var(--muted);font-size:.7rem}
+.persona-fields label b,.persona-controls label b{color:var(--ink);font-size:.75rem}
+.persona-fields select,.persona-controls select{width:100%;min-height:42px;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:var(--surface,#fff);color:var(--ink);font:inherit}
+.persona-fields input[type=range],.persona-controls input[type=range]{width:100%;accent-color:var(--red)}
+.persona-budget-ends{display:flex;justify-content:space-between;color:var(--muted);font-size:.62rem}
+.persona-priority-note{margin:5px 0 0;color:var(--muted);font-size:.68rem;line-height:1.5}
+.persona-controls{align-items:end}
+.persona-controls>.button-primary{grid-column:1/-1;justify-self:start;display:inline-flex;align-items:center;gap:8px;padding:11px 16px;font-size:.72rem}
+.recommendation-run-panel{display:grid;grid-template-columns:minmax(180px,.75fr) 1.25fr;align-items:center;gap:20px;margin:0 0 24px;padding:18px 21px;border:1px solid var(--line);border-radius:15px;background:var(--surface,#fff)}
+.recommendation-run-panel>div:first-child p{margin:7px 0 0;color:var(--muted);font-size:.69rem;line-height:1.5}
+.recommendation-run-panel .persona-controls{grid-template-columns:1fr 1fr auto;align-items:end;gap:12px}
+.recommendation-run-panel .persona-controls>.button-primary{grid-column:auto;white-space:nowrap}
+.recommendation-setup-gate{text-align:left}
+.recommendation-setup-gate .recommendation-gate-icon{margin-left:0}
+.recommendation-setup-gate .persona-controls{margin-top:20px}
+.recommendation-setup-gate .recommendation-secondary{text-align:center}
+:root[data-theme="dark"] .recommendation-run-panel{background:#211b20;border-color:#3b3036;color:#f5edf0}
+@media(max-width:680px){
+  .persona-fields{grid-column:1/-1;margin-top:12px}
+  .persona-fields,.persona-controls{grid-template-columns:1fr;gap:14px}
+  .recommendation-run-panel{grid-template-columns:1fr;gap:14px;padding:15px}
+  .recommendation-run-panel .persona-controls{grid-template-columns:1fr}
+  .recommendation-run-panel .persona-controls>.button-primary{grid-column:1;justify-self:stretch;justify-content:center}
+  .recommendation-setup-gate{text-align:center}
+  .recommendation-setup-gate .recommendation-gate-icon{margin-left:auto}
+  .recommendation-setup-gate .persona-controls>.button-primary{justify-self:stretch;justify-content:center}
+}

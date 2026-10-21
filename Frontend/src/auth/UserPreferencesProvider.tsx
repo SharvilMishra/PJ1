@@ -5,9 +5,12 @@ import { db } from "./firebase";
 
 export const preferenceCategories = ["gaming", "battery", "camera", "budget", "flagship"] as const;
 export type PreferenceCategory = typeof preferenceCategories[number];
-export type UserPreferences = { categories: PreferenceCategory[] };
+export const recommendationPersonas = ["student", "creator", "gaming", "business", "senior"] as const;
+export type RecommendationPersona = typeof recommendationPersonas[number];
+export type UserPreferences = { categories: PreferenceCategory[]; persona: RecommendationPersona | null; maxPrice: number };
 
-const emptyPreferences: UserPreferences = { categories: [] };
+const DEFAULT_MAX_PRICE = 2000;
+const emptyPreferences: UserPreferences = { categories: [], persona: null, maxPrice: DEFAULT_MAX_PRICE };
 const PreferencesContext = createContext<{
   preferences: UserPreferences;
   loading: boolean;
@@ -21,6 +24,12 @@ function normalizeCategories(value: unknown): PreferenceCategory[] {
   return [...new Set(value.filter((item): item is PreferenceCategory =>
     typeof item === "string" && (preferenceCategories as readonly string[]).includes(item),
   ))];
+}
+
+function normalizePersona(value: unknown): RecommendationPersona | null {
+  return typeof value === "string" && (recommendationPersonas as readonly string[]).includes(value)
+    ? value as RecommendationPersona
+    : null;
 }
 
 export function UserPreferencesProvider({ children }: { children: ReactNode }) {
@@ -51,7 +60,11 @@ export function UserPreferencesProvider({ children }: { children: ReactNode }) {
         const snapshot = await getDoc(reference);
         if (cancelled) return;
         if (snapshot.exists()) {
-          setPreferences({ categories: normalizeCategories(snapshot.data().categories) });
+          const data = snapshot.data();
+          const maxPrice = typeof data.maxPrice === "number" && Number.isFinite(data.maxPrice)
+            ? Math.min(DEFAULT_MAX_PRICE, Math.max(0, data.maxPrice))
+            : DEFAULT_MAX_PRICE;
+          setPreferences({ categories: normalizeCategories(data.categories), persona: normalizePersona(data.persona), maxPrice });
         } else {
           setPreferences(emptyPreferences);
         }
@@ -69,7 +82,11 @@ export function UserPreferencesProvider({ children }: { children: ReactNode }) {
   }, [user, authLoading]);
 
   const savePreferences = useCallback(async (next: UserPreferences) => {
-    const safePreferences = { categories: normalizeCategories(next.categories) };
+    const safePreferences = {
+      categories: normalizeCategories(next.categories),
+      persona: normalizePersona(next.persona),
+      maxPrice: Number.isFinite(next.maxPrice) ? Math.min(DEFAULT_MAX_PRICE, Math.max(0, next.maxPrice)) : DEFAULT_MAX_PRICE,
+    };
     if (!user) throw new Error("Sign in to save recommendation priorities.");
     setSaving(true);
     setError("");
@@ -77,6 +94,8 @@ export function UserPreferencesProvider({ children }: { children: ReactNode }) {
       if (!db) throw new Error("Firebase is not configured.");
       await setDoc(doc(db, "userPreferences", user.uid), {
         categories: safePreferences.categories,
+        persona: safePreferences.persona,
+        maxPrice: safePreferences.maxPrice,
         updatedAt: serverTimestamp(),
       });
       setPreferences(safePreferences);

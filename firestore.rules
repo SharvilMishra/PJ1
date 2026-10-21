@@ -7,10 +7,14 @@ service cloud.firestore {
       }
 
       function validPreferences() {
-        return request.resource.data.keys().hasOnly(['categories', 'updatedAt'])
+        return request.resource.data.keys().hasOnly(['categories', 'persona', 'maxPrice', 'updatedAt'])
           && request.resource.data.categories is list
           && request.resource.data.categories.size() <= 5
           && request.resource.data.categories.hasOnly(['gaming', 'battery', 'camera', 'budget', 'flagship'])
+          && (request.resource.data.persona == null || request.resource.data.persona in ['student', 'creator', 'gaming', 'business', 'senior'])
+          && request.resource.data.maxPrice is number
+          && request.resource.data.maxPrice >= 0
+          && request.resource.data.maxPrice <= 2000
           && request.resource.data.updatedAt == request.time;
       }
 

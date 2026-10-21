@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider";
 import { usePhoneActions } from "../auth/PhoneActionsProvider";
 import { useUserPreferences, type PreferenceCategory } from "../auth/UserPreferencesProvider";
+import { personaLabels } from "../data/catalog";
 import { formatPrice, phoneById } from "../data/catalog";
 
 const preferenceLabels: Record<PreferenceCategory, string> = { gaming: "Gaming first", battery: "Long battery", camera: "Camera first", budget: "Best value", flagship: "Premium phones" };
@@ -19,6 +20,6 @@ export function ProfilePage() {
     <section className="profile-section" id="saved"><div className="section-heading"><div><span className="eyebrow">KEEP YOUR SHORTLIST CLOSE</span><h2>Saved phones</h2></div><Link to="/search" className="text-link">Discover more <span>↗</span></Link></div>
       {savedPhones.length ? <div className="saved-grid">{savedPhones.map((phone) => <article className="saved-card" key={phone.id}><div className="saved-art rose"><div className="saved-device"><i /><i /><i /></div></div><div className="saved-details"><span>{phone.brand}</span><h3>{phone.model}</h3><b>{formatPrice(phone.price)}</b><div><button onClick={() => toggleCompare(phone.id)}>{compareIds.includes(phone.id) ? "Selected for compare" : "＋ Compare"}</button><button aria-label={`Remove ${phone.name} from saved phones`} onClick={() => toggleSaved(phone.id)}>Remove</button></div></div></article>)}</div> : <div className="empty-saved-state"><h3>No saved phones yet</h3><p>Save phones from the catalog and they’ll appear here on this device.</p><Link className="button-primary" to="/search">Explore phones <span>↗</span></Link></div>}
     </section>
-    <section className="preferences-card"><div><span className="pref-icon">✳</span><div><h3>Your phone priorities</h3><p>Used to rank catalog recommendations.</p></div></div>{preferencesLoading ? <div className="preference-chips"><span className="skeleton-block skeleton-chip" /><span className="skeleton-block skeleton-chip" /></div> : <div className="preference-chips">{preferences.categories.length ? preferences.categories.map((category) => <span key={category}>{preferenceLabels[category]}</span>) : <span>No priorities selected yet</span>}<Link to="/settings">Edit preferences</Link></div>}</section>
+    <section className="preferences-card"><div><span className="pref-icon">✳</span><div><h3>Your phone priorities</h3><p>Used to rank catalog recommendations.</p></div></div>{preferencesLoading ? <div className="preference-chips"><span className="skeleton-block skeleton-chip" /><span className="skeleton-block skeleton-chip" /></div> : <div className="preference-chips">{preferences.persona && <span>{personaLabels[preferences.persona]}</span>}{preferences.persona && <span>Budget up to {preferences.maxPrice.toLocaleString("en-US")}</span>}{preferences.categories.length ? preferences.categories.map((category) => <span key={category}>{preferenceLabels[category]}</span>) : !preferences.persona && <span>No recommendation profile set yet</span>}<Link to="/settings">Edit preferences</Link></div>}</section>
   </main>;
 }

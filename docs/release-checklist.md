@@ -5,18 +5,20 @@ Run these checks on a production preview before each release. Use one signed-in 
 ## Sign-in and saved priorities
 
 - [ ] Sign in with the test account and confirm the app returns to the requested page.
-- [ ] In Settings, select Gaming, Battery life, and Camera quality, save, refresh, and confirm all three remain selected.
-- [ ] Sign out, sign back in with the same account, and confirm the same priorities load.
-- [ ] Open the app as a guest and confirm priority controls direct the visitor to sign in; guest actions do not overwrite the account’s saved priorities.
+- [ ] In Settings, select a persona and set a budget, save, refresh, and confirm both remain selected.
+- [ ] Sign out, sign back in with the same account, and confirm the same persona, budget, and category priorities load.
+- [ ] Open the app as a guest and confirm the recommendation setup prompts sign-in; guest choices do not overwrite the account’s saved profile.
 
 ## Recommendations
 
-- [ ] As a guest with no saved priorities, open **What we recommend**. Confirm the setup prompt explains that priorities are required and offers sign-in.
-- [ ] As a signed-in account with no priorities, open the same page. Confirm it offers the preference setup path and does not show a fabricated ranked list.
-- [ ] Save one priority and then several priorities. Confirm phones are ranked and the overall match is the equal-weight average of the selected priority scores.
-- [ ] Expand **How this score was calculated** on a result. Confirm each selected priority has its own score, category-tag status, and relevant spec explanation.
-- [ ] Use a catalog phone with a missing relevant spec. Confirm the breakdown explicitly says that spec is missing and uses the category match only for that priority.
-- [ ] Change priorities and confirm the ordering, per-priority breakdown, and displayed match percentages update together.
+- [ ] As a guest, open **What we recommend**. Confirm persona and budget selection require sign-in before they can be saved.
+- [ ] As a signed-in account with no persona, open the same page. Confirm the setup dialog offers persona and budget controls and shows no ranked list until **Run recommender** is pressed.
+- [ ] Choose Student and set a budget. Run the recommender and confirm only the five highest scoring catalog phones at or below that budget appear.
+- [ ] Expand **Score contribution by priority**. Confirm each weighted field shows its weight, normalized value, and point contribution; verify the contributions sum to the match score (allowing rounding).
+- [ ] Use a catalog phone with a missing field. Confirm the breakdown explicitly flags it and assigns zero points without estimating a value.
+- [ ] Switch to Gaming, Creator, Business Professional, and Senior. Confirm persona weights shown in the breakdown change and the list is recalculated.
+- [ ] Set a budget above the catalog maximum (up to 2,000). Confirm the slider supports the full range and phones beyond the source maximum are not invented.
+- [ ] Refresh and sign in again. Confirm persona and budget persist in the account.
 
 ## Search filters on mobile
 
