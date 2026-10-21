@@ -5,6 +5,7 @@ import { signOutUser } from "./auth/authActions";
 import { HomePage } from "./pages/HomePage";
 import { ComparePage } from "./pages/ComparePage";
 import { RecommendationsPage } from "./pages/RecommendationsPage";
+import { PhoneDetailsPage } from "./pages/PhoneDetailsPage";
 import { SignInPage } from "./pages/SignInPage";
 import { SignUpPage } from "./pages/SignUpPage";
 import { SearchPage } from "./pages/SearchPage";
@@ -49,7 +50,7 @@ function AppShell() {
           <Link className={location.pathname === "/" ? "active" : ""} to="/">Discover</Link>
           <Link className={location.pathname === "/compare" ? "active" : ""} to="/compare">Compare</Link>
           <Link className={location.pathname === "/recommendations" ? "active" : ""} to="/recommendations">What we recommend</Link>
-          <Link className={location.pathname === "/search" ? "active" : ""} to="/search">Advanced search</Link>
+          <Link className={location.pathname === "/search" ? "active" : ""} to="/search">Search phone</Link>
         </nav>
         <div className="header-actions">
           {user ? <Link className="avatar-button" to="/profile" aria-label="Your profile">{user.displayName?.slice(0, 1) || user.email?.slice(0, 1) || "U"}</Link> : <><span className="guest-pill">Browsing as guest</span><Link className="header-signin" to="/signin">Sign in</Link></>}
@@ -58,8 +59,7 @@ function AppShell() {
             {menuOpen && <><button className="menu-scrim" aria-label="Close menu" onClick={() => setMenuOpen(false)} /><div className="menu-popover">
               <p className="menu-label">EXPLORE</p>
               <Link to="/" onClick={() => setMenuOpen(false)}><span>⌂</span>Home</Link>
-              <Link to="/search" onClick={() => setMenuOpen(false)}><span>⌕</span>Find a phone</Link>
-              <Link to="/search" onClick={() => setMenuOpen(false)}><span>☷</span>Advanced search</Link>
+              <Link to="/search" onClick={() => setMenuOpen(false)}><span>⌕</span>Search phone</Link>
               <Link to="/compare" onClick={() => setMenuOpen(false)}><span>⇄</span>Compare phones</Link>
               <Link to="/recommendations" onClick={() => setMenuOpen(false)}><span>✦</span>What we recommend</Link>
               <Link to="/profile#saved" onClick={() => setMenuOpen(false)}><span>♡</span>Saved phones</Link>
@@ -79,6 +79,7 @@ function AppShell() {
         <Route path="/" element={<HomePage />} />
         <Route path="/compare" element={<ComparePage />} />
         <Route path="/recommendations" element={<RecommendationsPage />} />
+        <Route path="/phone/:id" element={<PhoneDetailsPage />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/settings" element={<SettingsPage />} />
