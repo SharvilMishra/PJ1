@@ -18,7 +18,7 @@ import { AppPageSkeleton } from "./components/LoadingSkeletons";
 
 function HomeLoadingSplash() {
   return <div className="home-loading-splash" role="status" aria-label="Loading ELYVEX">
-    <img src={`${import.meta.env.BASE_URL}assets/elyvex-mark.svg`} alt="ELYVEX — Better choices begin here" />
+    <img src={`${import.meta.env.BASE_URL}assets/elyvex-logo-art.png`} alt="ELYVEX — Better choices begin here" />
   </div>;
 }
 
@@ -27,13 +27,14 @@ function AppShell() {
   const location = useLocation();
   const { user, loading: authLoading } = useAuth();
   const authPage = ["/signin", "/signup"].includes(location.pathname);
-  const [showHomeSplash, setShowHomeSplash] = useState(() => location.pathname === "/");
+  const [showHomeSplash, setShowHomeSplash] = useState(false);
 
   useEffect(() => {
-    if (!showHomeSplash) return;
+    if (location.pathname !== "/") { setShowHomeSplash(false); return; }
+    setShowHomeSplash(true);
     const timer = window.setTimeout(() => setShowHomeSplash(false), 1500);
     return () => window.clearTimeout(timer);
-  }, [showHomeSplash]);
+  }, [location.pathname]);
 
   if (authPage) return <Routes><Route path="/signin" element={<SignInPage />} /><Route path="/signup" element={<SignUpPage />} /></Routes>;
   if (authLoading) return <><AppPageSkeleton />{showHomeSplash && <HomeLoadingSplash />}</>;

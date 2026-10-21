@@ -28,6 +28,7 @@ export function SignInPage() {
   return (
     <main className="auth-page">
       <section className="auth-panel">
+        <svg className="auth-divider-wave" viewBox="0 0 100 1000" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="authDivider" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#fa4861"/><stop offset=".55" stopColor="#b90d30"/><stop offset="1" stopColor="#760b28"/></linearGradient></defs><path d="M0 0C84 72 18 170 63 270S107 437 28 525 21 710 83 818 69 941 0 1000Z" fill="url(#authDivider)"/><path d="M7 0C92 79 27 170 72 270S116 437 37 525 30 710 92 818 78 941 9 1000" fill="none" stroke="#ffb3bd" strokeOpacity=".65" strokeWidth="3" vectorEffect="non-scaling-stroke" /></svg>
         <Link className="auth-brand" to="/" aria-label="ELYVEX home"><span>ELYVEX</span><small>BETTER CHOICES BEGIN HERE</small></Link>
         <div className="auth-content">
           <div className="auth-heading"><h1>Sign in</h1><p>Your perfect phone match,<br />just a sign in away.</p></div>
@@ -47,8 +48,8 @@ export function SignInPage() {
         <p className="auth-legal">By continuing, you agree to our <Link to="/terms">Terms</Link> and <Link to="/privacy">Privacy Policy</Link>.</p>
       </section>
       <aside className="auth-art" aria-label="A crimson smartphone framed by white and red flowing waves">
-        <svg className="auth-wave auth-wave-white" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0H610C735 92 572 203 677 306S765 497 650 588 568 791 704 870 720 948 636 1000H0Z" /></svg>
-        <svg className="auth-wave auth-wave-crimson" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="authCrimson" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#ff304b"/><stop offset=".5" stopColor="#c80e2e"/><stop offset="1" stopColor="#65091e"/></linearGradient></defs><path d="M1000 0H802C698 105 857 207 754 312S697 495 824 600 854 810 737 900 724 962 792 1000H1000Z" fill="url(#authCrimson)"/><path className="auth-wave-ribbon" d="M1000 90H887C796 184 909 245 831 342S790 526 900 619 909 788 828 861" /></svg>
+        <svg className="auth-wave auth-wave-white" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true"><path className="auth-wave-base" d="M0 0H610C735 92 572 203 677 306S765 497 650 588 568 791 704 870 720 948 636 1000H0Z" /><path className="auth-wave-line wave-line-one" d="M-30 245C190 118 348 367 674 203"/><path className="auth-wave-line wave-line-two" d="M-25 565C190 432 422 684 672 506"/><path className="auth-wave-line wave-line-three" d="M-20 850C205 716 431 959 699 800"/></svg>
+        <svg className="auth-wave auth-wave-crimson" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="authCrimson" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#ff304b"/><stop offset=".5" stopColor="#c80e2e"/><stop offset="1" stopColor="#65091e"/></linearGradient></defs><path d="M1000 0H802C698 105 857 207 754 312S697 495 824 600 854 810 737 900 724 962 792 1000H1000Z" fill="url(#authCrimson)"/><path className="auth-wave-ribbon" d="M1000 90H887C796 184 909 245 831 342S790 526 900 619 909 788 828 861"/><path className="auth-wave-ribbon auth-wave-ribbon-two" d="M1000 270C918 324 979 397 905 465S872 608 966 679"/></svg>
         <img className="auth-phone-photo" src={`${import.meta.env.BASE_URL}assets/login-phone-cutout.png`} alt="A glossy crimson smartphone with a triple camera" />
       </aside>
     </main>
