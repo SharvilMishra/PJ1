@@ -18,7 +18,8 @@ import { AppPageSkeleton } from "./components/LoadingSkeletons";
 
 function HomeLoadingSplash() {
   return <div className="home-loading-splash" role="status" aria-label="Loading ELYVEX">
-    <img src={`${import.meta.env.BASE_URL}assets/elyvex-logo-art.png`} alt="ELYVEX — Better choices begin here" />
+    <span>BETTER CHOICES BEGIN HERE</span>
+    <i aria-hidden="true"><b /><b /><b /></i>
   </div>;
 }
 
