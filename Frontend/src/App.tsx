@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, Route, Routes, useLocation } from "react-router-dom";
 import { AuthProvider, useAuth } from "./auth/AuthProvider";
 import { signOutUser } from "./auth/authActions";
@@ -14,14 +14,29 @@ import { TermsPage } from "./pages/TermsPage";
 import { LatestUpdatesDialog } from "./components/LatestUpdatesDialog";
 import { UserPreferencesProvider } from "./auth/UserPreferencesProvider";
 import { PhoneActionsProvider } from "./auth/PhoneActionsProvider";
+import { AppPageSkeleton } from "./components/LoadingSkeletons";
+
+function HomeLoadingSplash() {
+  return <div className="home-loading-splash" role="status" aria-label="Loading ELYVEX">
+    <img src={`${import.meta.env.BASE_URL}assets/elyvex-mark.svg`} alt="ELYVEX — Better choices begin here" />
+  </div>;
+}
 
 function AppShell() {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const authPage = ["/signin", "/signup"].includes(location.pathname);
+  const [showHomeSplash, setShowHomeSplash] = useState(() => location.pathname === "/");
+
+  useEffect(() => {
+    if (!showHomeSplash) return;
+    const timer = window.setTimeout(() => setShowHomeSplash(false), 1500);
+    return () => window.clearTimeout(timer);
+  }, [showHomeSplash]);
 
   if (authPage) return <Routes><Route path="/signin" element={<SignInPage />} /><Route path="/signup" element={<SignUpPage />} /></Routes>;
+  if (authLoading) return <><AppPageSkeleton />{showHomeSplash && <HomeLoadingSplash />}</>;
 
   return (
     <div className="app-shell">
@@ -68,6 +83,7 @@ function AppShell() {
       </Routes>
       <footer className="site-footer"><span>© 2026 ELYVEX</span><span className="footer-links"><Link to="/privacy">Privacy</Link><Link to="/terms">Terms</Link><Link to="/about">About</Link></span><span>Better choices begin here <i>♥</i></span></footer>
       {user && <LatestUpdatesDialog userId={user.uid} />}
+      {showHomeSplash && <HomeLoadingSplash />}
     </div>
   );
 }

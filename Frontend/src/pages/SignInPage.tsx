@@ -46,8 +46,10 @@ export function SignInPage() {
         </div>
         <p className="auth-legal">By continuing, you agree to our <Link to="/terms">Terms</Link> and <Link to="/privacy">Privacy Policy</Link>.</p>
       </section>
-      <aside className="auth-art" aria-label="Crimson smartphone against a dark red background">
-        <img className="auth-phone-photo" src={`${import.meta.env.BASE_URL}assets/login-phone.png`} alt="A glossy crimson smartphone with a triple camera" />
+      <aside className="auth-art" aria-label="A crimson smartphone framed by white and red flowing waves">
+        <svg className="auth-wave auth-wave-white" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0H610C735 92 572 203 677 306S765 497 650 588 568 791 704 870 720 948 636 1000H0Z" /></svg>
+        <svg className="auth-wave auth-wave-crimson" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="authCrimson" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#ff304b"/><stop offset=".5" stopColor="#c80e2e"/><stop offset="1" stopColor="#65091e"/></linearGradient></defs><path d="M1000 0H802C698 105 857 207 754 312S697 495 824 600 854 810 737 900 724 962 792 1000H1000Z" fill="url(#authCrimson)"/><path className="auth-wave-ribbon" d="M1000 90H887C796 184 909 245 831 342S790 526 900 619 909 788 828 861" /></svg>
+        <img className="auth-phone-photo" src={`${import.meta.env.BASE_URL}assets/login-phone-cutout.png`} alt="A glossy crimson smartphone with a triple camera" />
       </aside>
     </main>
   );
