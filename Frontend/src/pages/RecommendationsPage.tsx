@@ -1,0 +1,27 @@
+import { Link } from "react-router-dom";
+import { useAuth } from "../auth/AuthProvider";
+import { usePhoneActions } from "../auth/PhoneActionsProvider";
+import { useUserPreferences } from "../auth/UserPreferencesProvider";
+import { formatPrice, formatProcessor, phones, phoneSpecs, recommendationScore } from "../data/catalog";
+import { PhoneCardsSkeleton } from "../components/LoadingSkeletons";
+
+const names: Record<string, string> = { gaming: "Gaming", battery: "Battery life", camera: "Camera quality", budget: "Best value", flagship: "Premium" };
+
+export function RecommendationsPage() {
+  const { user } = useAuth();
+  const { preferences, loading, error } = useUserPreferences();
+  const { savedIds, compareIds, toggleSaved, toggleCompare } = usePhoneActions();
+  const priorities = preferences.categories;
+  const ranked = priorities.length
+    ? [...phones].sort((a, b) => recommendationScore(b, priorities) - recommendationScore(a, priorities)
+      || (b.rating ?? 0) - (a.rating ?? 0) || (a.price ?? Infinity) - (b.price ?? Infinity)).slice(0, 12)
+    : [];
+
+  return <main className="page-wrap recommendations-page">
+    <header className="page-heading"><span className="eyebrow">A SHORTLIST BUILT AROUND YOU</span><h1>What we recommend.</h1><p className="lead">Your saved priorities are scored against the phone catalog to find your strongest matches.</p></header>
+    {loading ? <PhoneCardsSkeleton /> : error ? <div className="empty-saved-state"><h3>We couldn’t load your priorities</h3><p>{error}</p><Link className="button-primary" to="/settings">Open settings <span>↗</span></Link></div> : !priorities.length ? <div className="recommendation-gate-backdrop"><section className="recommendation-gate" role="dialog" aria-modal="true" aria-labelledby="recommendation-gate-title"><span className="recommendation-gate-icon">✦</span><span className="eyebrow">PERSONALIZE YOUR RESULTS</span><h2 id="recommendation-gate-title">Set your priorities first</h2><p>{user ? "Choose what matters most to you and we’ll calculate a ranked shortlist from the catalog." : "Sign in to set and save your priorities. Then we can calculate a shortlist that fits what matters to you."}</p><Link className="button-primary" to={user ? "/settings" : "/signin"} state={user ? undefined : { returnTo: "/recommendations" }}>{user ? "Set my priorities" : "Sign in to set priorities"} <span>↗</span></Link><Link className="recommendation-secondary" to="/">Back to Discover</Link></section></div> : <>
+      <section className="recommendation-method"><div><span className="eyebrow">YOUR SELECTED PRIORITIES</span><div className="recommendation-priorities">{priorities.map((priority) => <span key={priority}>{names[priority]}</span>)}</div></div><Link className="text-link" to="/settings#recommendations">Update priorities ↗</Link><p>Each priority has equal weight. For each one, we combine its catalog category match (50%) with a normalized specification score (50%): RAM for gaming, battery capacity, main camera megapixels, lower price for value, and rating for premium. Missing specs use the category match only.</p></section>
+      <section className="recommendation-results"><div className="section-heading"><div><span className="eyebrow">RANKED FROM YOUR CATALOG</span><h2>Your best matches</h2></div><span className="recommendation-count">{ranked.length} recommendations</span></div><div className="recommendation-list">{ranked.map((phone, index) => { const score = Math.round(recommendationScore(phone, priorities)); const selected = compareIds.includes(phone.id); return <article className="recommendation-card" key={phone.id}><span className="recommendation-rank">{String(index + 1).padStart(2, "0")}</span><div className={`recommendation-phone-art ${["rose", "sand", "lavender"][index % 3]}`}><div className="phone-render"><i /><i /><i /></div></div><div className="recommendation-details"><span className="result-brand">{phone.brand}</span><h3>{phone.model}</h3><p>{formatProcessor(phone.processor)}</p><div className="result-specs">{phoneSpecs(phone).map((spec) => <span key={spec}>{spec}</span>)}</div><div className="recommendation-tags">{priorities.map((priority) => <span className={phone.categories.includes(priority) ? "matched" : ""} key={priority}>{phone.categories.includes(priority) ? "✓ " : ""}{names[priority]}</span>)}</div></div><div className="recommendation-score"><b>{score}%</b><span>match</span><div><i style={{ width: `${score}%` }} /></div><strong>{formatPrice(phone.price)}</strong><div className="recommendation-actions"><button type="button" onClick={() => toggleSaved(phone.id)}>{savedIds.includes(phone.id) ? "♥ Saved" : "♡ Save"}</button><button type="button" aria-pressed={selected} onClick={() => toggleCompare(phone.id)}>{selected ? "✓ Compare" : "+ Compare"}</button></div></div></article>; })}</div><p className="dataset-note">Match scores are relative to the specifications available in the supplied catalog. Check the listed phone details before deciding.</p></section>
+    </>}
+  </main>;
+}

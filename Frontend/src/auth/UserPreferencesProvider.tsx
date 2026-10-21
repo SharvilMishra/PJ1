@@ -7,7 +7,6 @@ export const preferenceCategories = ["gaming", "battery", "camera", "budget", "f
 export type PreferenceCategory = typeof preferenceCategories[number];
 export type UserPreferences = { categories: PreferenceCategory[] };
 
-const GUEST_STORAGE_KEY = "elyvex.guest.preferences";
 const emptyPreferences: UserPreferences = { categories: [] };
 const PreferencesContext = createContext<{
   preferences: UserPreferences;
@@ -22,16 +21,6 @@ function normalizeCategories(value: unknown): PreferenceCategory[] {
   return [...new Set(value.filter((item): item is PreferenceCategory =>
     typeof item === "string" && (preferenceCategories as readonly string[]).includes(item),
   ))];
-}
-
-function readGuestPreferences(): UserPreferences {
-  try {
-    const stored = localStorage.getItem(GUEST_STORAGE_KEY);
-    if (!stored) return emptyPreferences;
-    return { categories: normalizeCategories(JSON.parse(stored)) };
-  } catch {
-    return emptyPreferences;
-  }
 }
 
 export function UserPreferencesProvider({ children }: { children: ReactNode }) {
@@ -49,8 +38,8 @@ export function UserPreferencesProvider({ children }: { children: ReactNode }) {
 
     async function loadPreferences() {
       if (!user) {
-        const guestPreferences = readGuestPreferences();
-        if (!cancelled) { setPreferences(guestPreferences); setLoading(false); }
+        try { localStorage.removeItem("elyvex.guest.preferences"); } catch { /* Storage is optional. */ }
+        if (!cancelled) { setPreferences(emptyPreferences); setLoading(false); }
         return;
       }
       if (!db) {
@@ -64,16 +53,11 @@ export function UserPreferencesProvider({ children }: { children: ReactNode }) {
         if (snapshot.exists()) {
           setPreferences({ categories: normalizeCategories(snapshot.data().categories) });
         } else {
-          const guestPreferences = readGuestPreferences();
-          setPreferences(guestPreferences);
-          if (guestPreferences.categories.length) {
-            await setDoc(reference, { categories: guestPreferences.categories, updatedAt: serverTimestamp() });
-            try { localStorage.removeItem(GUEST_STORAGE_KEY); } catch { /* Cloud copy has succeeded. */ }
-          }
+          setPreferences(emptyPreferences);
         }
       } catch {
         if (!cancelled) {
-          setPreferences(readGuestPreferences());
+          setPreferences(emptyPreferences);
           setError("Could not load your saved preferences. Check your connection and Firestore setup.");
         }
       } finally {
@@ -86,19 +70,15 @@ export function UserPreferencesProvider({ children }: { children: ReactNode }) {
 
   const savePreferences = useCallback(async (next: UserPreferences) => {
     const safePreferences = { categories: normalizeCategories(next.categories) };
+    if (!user) throw new Error("Sign in to save recommendation priorities.");
     setSaving(true);
     setError("");
     try {
-      if (user) {
-        if (!db) throw new Error("Firebase is not configured.");
-        await setDoc(doc(db, "userPreferences", user.uid), {
-          categories: safePreferences.categories,
-          updatedAt: serverTimestamp(),
-        });
-        try { localStorage.removeItem(GUEST_STORAGE_KEY); } catch { /* Optional guest migration cleanup. */ }
-      } else {
-        localStorage.setItem(GUEST_STORAGE_KEY, JSON.stringify(safePreferences.categories));
-      }
+      if (!db) throw new Error("Firebase is not configured.");
+      await setDoc(doc(db, "userPreferences", user.uid), {
+        categories: safePreferences.categories,
+        updatedAt: serverTimestamp(),
+      });
       setPreferences(safePreferences);
     } catch (cause) {
       const message = cause instanceof Error ? cause.message : "Could not save preferences.";

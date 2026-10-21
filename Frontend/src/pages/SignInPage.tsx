@@ -1,10 +1,12 @@
 import { useState, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { firebaseConfigured } from "../auth/firebase";
 import { signIn, signInWithGoogle } from "../auth/authActions";
 
 export function SignInPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const returnTo = (location.state as { returnTo?: string } | null)?.returnTo || "/";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -13,14 +15,14 @@ export function SignInPage() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setError(""); setBusy(true);
-    try { await signIn(email, password); navigate("/"); }
+    try { await signIn(email, password); navigate(returnTo); }
     catch (cause) { setError(cause instanceof Error ? cause.message : "We couldn't sign you in. Please try again."); }
     finally { setBusy(false); }
   }
 
   async function handleGoogle() {
     setError(""); setBusy(true);
-    try { await signInWithGoogle(); navigate("/"); }
+    try { await signInWithGoogle(); navigate(returnTo); }
     catch (cause) { setError(cause instanceof Error ? cause.message : "Google sign-in didn't work. Please try again."); }
     finally { setBusy(false); }
   }

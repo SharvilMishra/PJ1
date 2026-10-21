@@ -1,5 +1,6 @@
 import catalogData from "./phones.json";
 import type { Phone } from "../types/phone";
+import { preferenceCategories, type PreferenceCategory } from "../auth/UserPreferencesProvider";
 
 export const phones = catalogData as unknown as Phone[];
 export const phoneById = new Map(phones.map((phone) => [phone.id, phone]));
@@ -38,8 +39,38 @@ export function preferenceMatchCount(phone: Phone, selected: string[]): number {
 }
 
 export function rankPhones(selected: string[] = []): Phone[] {
-  return [...phones].sort((left, right) => {
-    const matchDelta = preferenceMatchCount(right, selected) - preferenceMatchCount(left, selected);
-    return matchDelta || (right.rating ?? 0) - (left.rating ?? 0) || (left.price ?? Infinity) - (right.price ?? Infinity);
+  if (!selected.length) return [...phones].sort((left, right) => (right.rating ?? 0) - (left.rating ?? 0) || (left.price ?? Infinity) - (right.price ?? Infinity));
+  return [...phones].sort((left, right) => recommendationScore(right, selected) - recommendationScore(left, selected)
+    || (right.rating ?? 0) - (left.rating ?? 0) || (left.price ?? Infinity) - (right.price ?? Infinity));
+}
+
+const preferenceMetric: Record<PreferenceCategory, { field: "ramGb" | "batteryMah" | "cameraMainMp" | "price" | "rating"; higherIsBetter: boolean }> = {
+  gaming: { field: "ramGb", higherIsBetter: true },
+  battery: { field: "batteryMah", higherIsBetter: true },
+  camera: { field: "cameraMainMp", higherIsBetter: true },
+  budget: { field: "price", higherIsBetter: false },
+  flagship: { field: "rating", higherIsBetter: true },
+};
+const preferenceBounds = Object.fromEntries(Object.values(preferenceMetric).map(({ field }) => {
+  const values = phones.map((phone) => phone[field]).filter((value): value is number => typeof value === "number" && Number.isFinite(value));
+  return [field, { min: Math.min(...values), max: Math.max(...values) }];
+})) as Record<(typeof preferenceMetric)[PreferenceCategory]["field"], { min: number; max: number }>;
+
+/** Equal-weight average of selected category scores; each category combines its catalog tag and normalized spec. */
+export function recommendationScore(phone: Phone, selected: string[]): number {
+  if (!selected.length) return 0;
+  const active = selected.filter((category): category is PreferenceCategory =>
+    (preferenceCategories as readonly string[]).includes(category),
+  );
+  if (!active.length) return 0;
+  const scores = active.map((category) => {
+    const { field, higherIsBetter } = preferenceMetric[category];
+    const { min, max } = preferenceBounds[field];
+    const raw = phone[field];
+    const hasMetric = typeof raw === "number" && Number.isFinite(raw) && max > min;
+    const metricScore = hasMetric ? ((raw - min) / (max - min)) * (higherIsBetter ? 1 : -1) + (higherIsBetter ? 0 : 1) : null;
+    const tagScore = phone.categories.includes(category) ? 1 : 0;
+    return metricScore === null ? tagScore * 100 : (tagScore * 0.5 + metricScore * 0.5) * 100;
   });
+  return scores.reduce((sum, score) => sum + score, 0) / scores.length;
 }
