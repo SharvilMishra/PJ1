@@ -253,6 +253,19 @@ body:has(.auth-page){background:#101015}
 @keyframes filter-drawer-in{from{transform:translateY(18px);opacity:.75}to{transform:translateY(0);opacity:1}}
 @media(prefers-reduced-motion:reduce){.filters-panel.mobile-open{animation:none}}
 
+/* Explicit shared surface tokens keep sticky mobile drawer regions in the active theme. */
+:root{--surface:#fff;--ink:#27191d}
+:root[data-theme="dark"]{--surface:#211b20;--ink:#f5edf0}
+.filter-panel-actions>button{border:0;background:transparent;color:var(--red);font-size:.71rem;font-weight:650}
+@media(max-width:680px){
+  .filters-panel.mobile-open .filters-title h2{color:var(--ink)}
+  .filters-panel.mobile-open .filters-title span{color:var(--muted)}
+  .filters-panel.mobile-open .filter-panel-actions>button:not(.mobile-filter-close){padding:8px 5px;color:var(--red)}
+  .filters-panel.mobile-open .mobile-filter-close{background:var(--surface)!important;color:var(--muted)!important}
+  .filters-panel.mobile-open .mobile-filter-footer{background:var(--surface);color:var(--ink);border-color:var(--line)}
+  .filters-panel.mobile-open .mobile-filter-footer>span{color:var(--muted)}
+}
+
 .persona-fields,.persona-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 18px}
 .persona-fields{grid-column:2;align-self:start;margin-top:16px}
 .persona-fields label,.persona-controls label{display:grid;gap:8px;color:var(--muted);font-size:.7rem}
@@ -281,4 +294,30 @@ body:has(.auth-page){background:#101015}
   .recommendation-setup-gate{text-align:center}
   .recommendation-setup-gate .recommendation-gate-icon{margin-left:auto}
   .recommendation-setup-gate .persona-controls>.button-primary{justify-self:stretch;justify-content:center}
+}
+
+/* Auth arrival sequence: wave layers, phone, then the sign-in controls. */
+.auth-art{isolation:isolate}
+.auth-art:before{content:"";display:block;position:absolute;z-index:0;width:min(62vw,680px);aspect-ratio:1;border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,#ffccd354 0,#f52a4930 34%,transparent 70%);filter:blur(12px);pointer-events:none;animation:auth-halo-breathe 5.8s 1.5s ease-in-out infinite}
+.auth-wave-white{transform-origin:right center;animation:auth-white-sweep 1.2s .08s cubic-bezier(.16,.82,.24,1) both}
+.auth-wave-crimson{transform-origin:right center;animation:auth-crimson-sweep 1.28s .28s cubic-bezier(.16,.82,.24,1) both}
+.auth-art>img.auth-phone-photo{animation:auth-phone-land 1.45s .38s cubic-bezier(.16,1,.3,1) both,auth-phone-drift 6.4s 2s ease-in-out infinite}
+.auth-wave-line{animation-duration:19s}
+.auth-wave-ribbon{animation-duration:16s}
+.auth-wave-ribbon-two{animation-duration:21s}
+.auth-brand{animation:auth-copy-rise .55s .08s cubic-bezier(.2,.75,.25,1) both}
+.auth-heading{animation:auth-copy-rise .7s .14s cubic-bezier(.2,.75,.25,1) both}
+.auth-form{animation:auth-copy-rise .72s .24s cubic-bezier(.2,.75,.25,1) both}
+.auth-divider,.google-button,.auth-switch{animation:auth-copy-rise .65s .38s cubic-bezier(.2,.75,.25,1) both}
+.auth-switch{animation-delay:.46s}
+.auth-legal{animation:auth-copy-rise .65s .52s cubic-bezier(.2,.75,.25,1) both}
+@keyframes auth-white-sweep{0%{opacity:0;transform:translateX(16%) scale(1.025)}65%{opacity:1;transform:translateX(-1.2%) scale(1.005)}100%{opacity:1;transform:translateX(0) scale(1)}}
+@keyframes auth-crimson-sweep{0%{opacity:.2;transform:translateX(24%) scale(1.035)}72%{opacity:1;transform:translateX(-1%) scale(1.008)}100%{opacity:1;transform:translateX(0) scale(1)}}
+@keyframes auth-phone-land{0%{opacity:0;transform:translate(78%,-43%) scale(.84) rotate(5deg)}68%{opacity:1;transform:translate(-54%,-51%) scale(1.025) rotate(-1deg)}86%{transform:translate(-49%,-49%) scale(.99) rotate(.35deg)}100%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(0)}}
+@keyframes auth-phone-drift{0%,100%{transform:translate(-50%,-50%) rotate(-.35deg)}50%{transform:translate(-50%,-50.8%) rotate(.35deg)}}
+@keyframes auth-halo-breathe{0%,100%{opacity:.46;scale:.96}50%{opacity:.9;scale:1.06}}
+@keyframes auth-copy-rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){
+  .auth-art:before,.auth-wave-white,.auth-wave-crimson,.auth-art>img.auth-phone-photo,.auth-brand,.auth-heading,.auth-form,.auth-divider,.google-button,.auth-switch,.auth-legal{animation:none!important}
+  .auth-art>img.auth-phone-photo{opacity:1;transform:translate(-50%,-50%)}
 }
