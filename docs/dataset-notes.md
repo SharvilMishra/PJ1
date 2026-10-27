@@ -2,6 +2,12 @@
 
 The supplied source is `Datasets/sic_mobile_spec_PJ1.xlsx`, a single-sheet Excel workbook with 413 phone records and 11 columns. Keep the original file unchanged. `scripts/build_phone_catalog.py` normalizes source-specific headers into the shared phone model; do not couple the frontend to raw source column names.
 
+## Provenance and confidence
+
+The app's catalog is generated from the owner-supplied workbook above. The workbook does not include per-phone source links or a verification date, and the project has not independently checked the listed values against manufacturers or sellers. Do not present the catalog as current or manufacturer-verified. Price currency and suspected measurement units remain unconfirmed; the app should identify prices as source values and direct shoppers to verify purchase-critical details.
+
+Category labels such as gaming, battery, camera, budget, and flagship are derived by the importer from catalog thresholds. They are app classifications, not source-workbook claims. Missing fields should remain visibly unavailable and must not be inferred.
+
 ## Source fields and data check
 
 | Source field | Current meaning / issue |

@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { usePhoneActions } from "../auth/PhoneActionsProvider";
 import { catalogBrands, catalogPriceBounds, formatPrice, formatProcessor, formatRating, phones, phoneSpecs } from "../data/catalog";
@@ -16,28 +16,82 @@ function ActiveFilter({ label, onRemove }: { label: string; onRemove: () => void
 
 function meetsThreshold(value: number | null, threshold: number) { return value !== null && value >= threshold; }
 
+type PersistedFilters = {
+  selectedBrands: string[];
+  selectedDisplays: string[];
+  priceFloor: number;
+  priceCap: number;
+  minDisplaySize: number;
+  maxWeight: number;
+  minRating: number;
+  minRam: number;
+  minStorage: number;
+  minBattery: number;
+  minCamera: number;
+  activeCategory: string;
+  sort: string;
+};
+
+const SEARCH_FILTERS_KEY = "elyvex.search-filters";
+function readPersistedFilters(): Partial<PersistedFilters> {
+  try {
+    const value: unknown = JSON.parse(sessionStorage.getItem(SEARCH_FILTERS_KEY) || "null");
+    return value && typeof value === "object" ? value as Partial<PersistedFilters> : {};
+  } catch {
+    return {};
+  }
+}
+
 export function SearchPage() {
   const location = useLocation();
   const [params, setParams] = useSearchParams();
   const initialCategory = params.get("category") || "";
-  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
-  const [selectedDisplays, setSelectedDisplays] = useState<string[]>([]);
-  const [priceFloor, setPriceFloor] = useState(minCatalogPrice);
-  const [priceCap, setPriceCap] = useState(maxCatalogPrice);
-  const [minDisplaySize, setMinDisplaySize] = useState(0);
-  const [maxWeight, setMaxWeight] = useState(weightBounds.max);
-  const [minRating, setMinRating] = useState(0);
-  const [activeCategory, setActiveCategory] = useState(() => categories.find((item) => categoryIds[item] === initialCategory) || "All phones");
-  const [minRam, setMinRam] = useState(0);
-  const [minStorage, setMinStorage] = useState(0);
-  const [minBattery, setMinBattery] = useState(0);
-  const [minCamera, setMinCamera] = useState(0);
-  const [sort, setSort] = useState("match");
+  const [restoredFilters] = useState(readPersistedFilters);
+  const [selectedBrands, setSelectedBrands] = useState<string[]>(() => restoredFilters.selectedBrands || []);
+  const [selectedDisplays, setSelectedDisplays] = useState<string[]>(() => restoredFilters.selectedDisplays || []);
+  const [priceFloor, setPriceFloor] = useState(() => restoredFilters.priceFloor ?? minCatalogPrice);
+  const [priceCap, setPriceCap] = useState(() => restoredFilters.priceCap ?? maxCatalogPrice);
+  const [minDisplaySize, setMinDisplaySize] = useState(() => restoredFilters.minDisplaySize ?? 0);
+  const [maxWeight, setMaxWeight] = useState(() => restoredFilters.maxWeight ?? weightBounds.max);
+  const [minRating, setMinRating] = useState(() => restoredFilters.minRating ?? 0);
+  const [activeCategory, setActiveCategory] = useState(() => categories.find((item) => categoryIds[item] === initialCategory) || restoredFilters.activeCategory || "All phones");
+  const [minRam, setMinRam] = useState(() => restoredFilters.minRam ?? 0);
+  const [minStorage, setMinStorage] = useState(() => restoredFilters.minStorage ?? 0);
+  const [minBattery, setMinBattery] = useState(() => restoredFilters.minBattery ?? 0);
+  const [minCamera, setMinCamera] = useState(() => restoredFilters.minCamera ?? 0);
+  const [sort, setSort] = useState(() => restoredFilters.sort || "match");
   const [visibleCount, setVisibleCount] = useState(24);
+  const [searchDraft, setSearchDraft] = useState(() => params.get("q") || "");
   const [compareMessage, setCompareMessage] = useState("");
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const { savedIds, compareIds, toggleSaved, toggleCompare } = usePhoneActions();
   const query = (params.get("q") || "").trim().toLocaleLowerCase();
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(SEARCH_FILTERS_KEY, JSON.stringify({
+        selectedBrands, selectedDisplays, priceFloor, priceCap, minDisplaySize, maxWeight,
+        minRating, minRam, minStorage, minBattery, minCamera, activeCategory, sort,
+      } satisfies PersistedFilters));
+    } catch { /* Search remains usable when browser storage is unavailable. */ }
+  }, [selectedBrands, selectedDisplays, priceFloor, priceCap, minDisplaySize, maxWeight, minRating, minRam, minStorage, minBattery, minCamera, activeCategory, sort]);
+
+  useEffect(() => setSearchDraft(params.get("q") || ""), [params]);
+  useEffect(() => {
+    setActiveCategory(categories.find((item) => categoryIds[item] === initialCategory) || "All phones");
+  }, [initialCategory]);
+
+  function submitSearch(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setParams((current) => {
+      const next = new URLSearchParams(current);
+      const value = searchDraft.trim();
+      if (value) next.set("q", value);
+      else next.delete("q");
+      return next;
+    }, { replace: true });
+    setVisibleCount(24);
+  }
 
   const filteredPhones = useMemo(() => {
     const categoryId = categoryIds[activeCategory];
@@ -71,7 +125,7 @@ export function SearchPage() {
     setParams((current) => { const next = new URLSearchParams(current); if (nextCategory === "All phones") next.delete("category"); else next.set("category", categoryIds[nextCategory]); return next; });
     setVisibleCount(24);
   }
-  function clear() { setParams({}); setSelectedBrands([]); setSelectedDisplays([]); setPriceFloor(minCatalogPrice); setPriceCap(maxCatalogPrice); setActiveCategory("All phones"); setMinRam(0); setMinStorage(0); setMinBattery(0); setMinCamera(0); setMinDisplaySize(0); setMaxWeight(weightBounds.max); setMinRating(0); setVisibleCount(24); }
+  function clear() { setParams({}); setSearchDraft(""); setSelectedBrands([]); setSelectedDisplays([]); setPriceFloor(minCatalogPrice); setPriceCap(maxCatalogPrice); setActiveCategory("All phones"); setMinRam(0); setMinStorage(0); setMinBattery(0); setMinCamera(0); setMinDisplaySize(0); setMaxWeight(weightBounds.max); setMinRating(0); setVisibleCount(24); }
   function addToCompare(id: string) {
     const success = toggleCompare(id);
     setCompareMessage(success ? "Comparison selection updated." : "Two phones are already selected. Remove one before adding another.");
@@ -79,7 +133,7 @@ export function SearchPage() {
   const hasFilters = activeCategory !== "All phones" || selectedBrands.length > 0 || selectedDisplays.length > 0 || priceFloor > minCatalogPrice || priceCap < maxCatalogPrice || minRam > 0 || minStorage > 0 || minBattery > 0 || minCamera > 0 || minDisplaySize > 0 || maxWeight < weightBounds.max || minRating > 0 || Boolean(query);
   const activeFilterCount = [activeCategory !== "All phones", priceFloor > minCatalogPrice || priceCap < maxCatalogPrice, minRam > 0, minStorage > 0, minBattery > 0, minCamera > 0, minDisplaySize > 0, maxWeight < weightBounds.max, minRating > 0, Boolean(query)].filter(Boolean).length + selectedBrands.length + selectedDisplays.length;
 
-  return <main className="page-wrap search-page"><div className="page-heading search-heading"><div><span className="eyebrow">MADE FOR YOUR MUST-HAVES</span><h1>Search phones</h1><p className="lead">Search and filter all {phones.length} phones from the supplied catalog.</p></div>{compareIds.length > 0 && <Link className="saved-filter-button" to="/compare">⇄ Compare {compareIds.length}/2</Link>}</div><button type="button" className="mobile-filter-trigger" aria-expanded={mobileFiltersOpen} aria-controls="phone-filters" onClick={() => setMobileFiltersOpen(true)}><span>☷ Filters{activeFilterCount ? ` · ${activeFilterCount} applied` : ""}</span><span>Open filters ↓</span></button>{mobileFiltersOpen && <button type="button" className="mobile-filter-scrim" aria-label="Close filters" onClick={() => setMobileFiltersOpen(false)} />}<div className="search-layout"><aside id="phone-filters" className={`filters-panel${mobileFiltersOpen ? " mobile-open" : ""}`} role={mobileFiltersOpen ? "dialog" : undefined} aria-modal={mobileFiltersOpen || undefined} aria-label="Phone filters"><div className="filters-title"><div><h2>Filters</h2><span>{activeFilterCount ? `${activeFilterCount} filters applied` : "Make it yours"}</span></div><div className="filter-panel-actions"><button onClick={clear}>Clear all</button><button type="button" className="mobile-filter-close" aria-label="Close filters" onClick={() => setMobileFiltersOpen(false)}>×</button></div></div>
+  return <main className="page-wrap search-page"><div className="page-heading search-heading"><div><span className="eyebrow">MADE FOR YOUR MUST-HAVES</span><h1>Search phones</h1><p className="lead">Search and filter all {phones.length} phones from the supplied catalog.</p></div>{compareIds.length > 0 && <Link className="saved-filter-button" to="/compare">⇄ Compare {compareIds.length}/2</Link>}</div><form className="catalog-search" role="search" onSubmit={submitSearch}><label htmlFor="catalog-query">Search by phone, brand, model, or processor</label><div><span aria-hidden="true">⌕</span><input id="catalog-query" type="search" placeholder="Try a brand or processor" value={searchDraft} onChange={(event) => setSearchDraft(event.target.value)} /><button className="button-primary" type="submit">Search</button></div></form><button type="button" className="mobile-filter-trigger" aria-expanded={mobileFiltersOpen} aria-controls="phone-filters" onClick={() => setMobileFiltersOpen(true)}><span>☷ Filters{activeFilterCount ? ` · ${activeFilterCount} applied` : ""}</span><span>Open filters ↓</span></button>{mobileFiltersOpen && <button type="button" className="mobile-filter-scrim" aria-label="Close filters" onClick={() => setMobileFiltersOpen(false)} />}<div className="search-layout"><aside id="phone-filters" className={`filters-panel${mobileFiltersOpen ? " mobile-open" : ""}`} role={mobileFiltersOpen ? "dialog" : undefined} aria-modal={mobileFiltersOpen || undefined} aria-label="Phone filters"><div className="filters-title"><div><h2>Filters</h2><span>{activeFilterCount ? `${activeFilterCount} filters applied` : "Make it yours"}</span></div><div className="filter-panel-actions"><button onClick={clear}>Clear all</button><button type="button" className="mobile-filter-close" aria-label="Close filters" onClick={() => setMobileFiltersOpen(false)}>×</button></div></div>
     <FilterGroup title="Category"><div className="filter-chips">{categories.map((item) => <button aria-pressed={activeCategory === item} onClick={() => chooseCategory(item)} className={activeCategory === item ? "selected" : ""} key={item}>{item}</button>)}</div></FilterGroup>
     <FilterGroup title="Catalog price range"><div className="range-labels"><span>{formatPrice(priceFloor)}</span><span>{formatPrice(priceCap)}</span></div><input className="range-input" type="range" min={minCatalogPrice} max={maxCatalogPrice} step="10" value={priceFloor} onChange={(event) => { setPriceFloor(Math.min(Number(event.target.value), priceCap)); setVisibleCount(24); }} aria-label="Minimum catalog price"/><input className="range-input" type="range" min={minCatalogPrice} max={maxCatalogPrice} step="10" value={priceCap} onChange={(event) => { setPriceCap(Math.max(Number(event.target.value), priceFloor)); setVisibleCount(24); }} aria-label="Maximum catalog price"/><div className="range-extremes"><span>Source price units</span><span>{formatPrice(maxCatalogPrice)}</span></div></FilterGroup>
     <FilterGroup title="Brand"><div className="check-list">{catalogBrands.map((brand) => <label key={brand}><input type="checkbox" checked={selectedBrands.includes(brand)} onChange={() => toggleBrand(brand)} /><span className="custom-check" />{brand}<small>{phones.filter((phone) => phone.brand === brand).length}</small></label>)}</div></FilterGroup>
@@ -111,6 +165,6 @@ export function SearchPage() {
     <div className="results-list">{filteredPhones.slice(0, visibleCount).map((phone, index) => <article className="result-card" key={phone.id}><Link className={`result-phone ${["rose", "sand", "lavender"][index % 3]}`} to={`/phone/${phone.id}`} state={{ from: `${location.pathname}${location.search}` }} aria-label={`View details for ${phone.name}`}><span className="mini-device"><i /><i /><i /></span></Link><div className="result-details"><span className="result-brand">{phone.brand} <span>·</span> <em>{formatRating(phone.rating)} rating</em></span><h3><Link to={`/phone/${phone.id}`} state={{ from: `${location.pathname}${location.search}` }}>{phone.model}</Link></h3><div className="result-specs">{phoneSpecs(phone).map((spec) => <span key={spec}>{spec}</span>)}{phone.displaySizeIn !== null && <span>{phone.displaySizeIn}″ display</span>}{phone.processor && <span>{formatProcessor(phone.processor)}</span>}</div><div className="result-actions"><button className="text-action" aria-pressed={savedIds.includes(phone.id)} onClick={() => toggleSaved(phone.id)}>{savedIds.includes(phone.id) ? "♥ Saved" : "♡ Save"}</button><button className="text-action" aria-pressed={compareIds.includes(phone.id)} onClick={() => addToCompare(phone.id)}>{compareIds.includes(phone.id) ? "✓ Selected" : "＋ Compare"}</button></div></div><div className="result-price"><span>Catalog price</span><b>{formatPrice(phone.price)}</b><span className="result-catalog-rating">★ {formatRating(phone.rating)}</span></div></article>)}</div>
     {!filteredPhones.length && <div className="empty-saved-state"><h3>No phones match these filters</h3><p>Try a wider price range or clear some filters.</p><button className="button-primary" onClick={clear}>Clear filters</button></div>}
     {filteredPhones.length > visibleCount && <button className="outline-button" onClick={() => setVisibleCount((count) => count + 24)}>Show more phones ({filteredPhones.length - visibleCount} remaining)</button>}
-    <p className="dataset-note">Showing normalized records from the supplied workbook. Prices use the source catalog’s numeric values; currency is not specified in the source.</p>
+    <p className="dataset-note">Catalog source: the supplied SIC mobile specification workbook ({phones.length} records). Verification date: not recorded; ELYVEX has not independently verified these records. Price currency and suspected measurement units are unconfirmed. Missing values are shown as not listed, and category labels are inferred from catalog thresholds. Check with the manufacturer or seller before buying.</p>
   </section></div></main>;
 }
