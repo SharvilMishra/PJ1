@@ -321,3 +321,13 @@ body:has(.auth-page){background:#101015}
   .auth-art:before,.auth-wave-white,.auth-wave-crimson,.auth-art>img.auth-phone-photo,.auth-brand,.auth-heading,.auth-form,.auth-divider,.google-button,.auth-switch,.auth-legal{animation:none!important}
   .auth-art>img.auth-phone-photo{opacity:1;transform:translate(-50%,-50%)}
 }
+
+/* Keep the panel seam clean and render the artwork contours as smooth ribbons. */
+.auth-divider-wave{display:none}
+.auth-wave-line{stroke-dasharray:none;stroke-width:1.5;stroke-opacity:.2;animation:auth-contour-breathe 6s ease-in-out infinite alternate}
+.wave-line-two{animation-delay:.8s}
+.wave-line-three{animation-delay:1.6s}
+.auth-wave-ribbon{stroke:#ffafba;stroke-width:3;stroke-opacity:.58;stroke-dasharray:none;animation:auth-contour-breathe 5s .4s ease-in-out infinite alternate}
+.auth-wave-ribbon-two{stroke:#ffd1d6;stroke-width:2;stroke-opacity:.38;stroke-dasharray:none;animation-delay:1.2s}
+@keyframes auth-contour-breathe{from{opacity:.28}to{opacity:.82}}
+@media(prefers-reduced-motion:reduce){.auth-divider-wave{display:none}.auth-wave-line,.auth-wave-ribbon{animation:none!important}}
