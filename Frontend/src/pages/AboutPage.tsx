@@ -10,11 +10,11 @@ const principles = [
 export function AboutPage() {
   return <main className="page-wrap about-page">
     <section className="about-hero">
-      <span className="eyebrow"><span className="eyebrow-dot" /> A LITTLE ABOUT ELYVEX</span>
+      <span className="eyebrow">A LITTLE ABOUT ELYVEX</span>
       <h1>Better choices<br />begin with <em>what matters to you.</em></h1>
       <p>ELYVEX is an independent phone discovery tool. It helps you make sense of a catalog, explore the features you care about, and compare your shortlist.</p>
       <div className="about-hero-actions"><Link className="button-primary" to="/search">Explore the catalog <span>↗</span></Link><Link className="about-text-link" to="/recommendations">How recommendations work <span>↗</span></Link></div>
-      <div className="about-hero-mark" aria-hidden="true"><img src={`${import.meta.env.BASE_URL}assets/elyvex-symbol.png`} alt="" /></div>
+      <div className="about-hero-mark" aria-hidden="true"><img src={`${import.meta.env.BASE_URL}assets/elyvex-symbol-transparent.png`} alt="" /></div>
     </section>
 
     <section className="about-how"><div className="section-heading"><div><span className="eyebrow">A CLEARER WAY TO CHOOSE</span><h2>From browsing to a shortlist.</h2></div></div><div className="about-principles">{principles.map((item) => <article className="about-principle" key={item.number}><span>{item.number}</span><h3>{item.title}</h3><p>{item.body}</p></article>)}</div></section>

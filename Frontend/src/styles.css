@@ -81,7 +81,7 @@ body:has(.auth-page){background:#101015}
 .spec-row{font-size:.75rem;padding-top:13px;padding-bottom:13px}
 .spec-row>span.spec-winner{width:fit-content;max-width:100%;display:flex;align-items:center;gap:7px;flex-wrap:wrap;border-radius:8px;background:#fff0f2;padding:5px 8px;color:#9d1635}
 .spec-winner i{display:inline-block;width:auto;margin:0;padding:3px 6px;background:#f9dfe4;color:#94213a;font-size:.55rem;white-space:nowrap}
-.brand-mark{width:40px;height:40px;flex:none;object-fit:contain;border-radius:11px;background:#080808;box-shadow:0 2px 8px #26040a22}
+.brand-mark{width:40px;height:40px;flex:none;object-fit:contain;border-radius:0;background:transparent;box-shadow:none}
 .appearance-options button{cursor:pointer;transition:border-color .16s,box-shadow .16s,transform .16s}
 .appearance-options button:hover{border-color:#cf7183;transform:translateY(-1px)}
 .appearance-options button:focus-visible{outline:3px solid #dd7184;outline-offset:3px}
