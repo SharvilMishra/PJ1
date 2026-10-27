@@ -332,6 +332,17 @@ body:has(.auth-page){background:#101015}
 @keyframes auth-contour-breathe{from{opacity:.28}to{opacity:.82}}
 @media(prefers-reduced-motion:reduce){.auth-divider-wave{display:none}.auth-wave-line,.auth-wave-ribbon{animation:none!important}}
 
+/* A single soft highlight glides along each contour to bring the phone trails to life. */
+.auth-trail,.auth-ribbon-trail{fill:none;stroke-dasharray:90 910;stroke-linecap:round;vector-effect:non-scaling-stroke;animation:auth-trail-travel 10s linear infinite}
+.auth-trail{stroke:#d92d4a;stroke-width:2.5;filter:drop-shadow(0 0 4px #ef5b7180)}
+.auth-ribbon-trail{stroke:#ffe3e7;stroke-width:2.4;filter:drop-shadow(0 0 5px #ff8c9caa)}
+.trail-two{animation-duration:11s;animation-delay:-3.5s}
+.trail-three{animation-duration:12s;animation-delay:-7s}
+.ribbon-trail-one{animation-duration:12s;animation-delay:-2s}
+.ribbon-trail-two{animation-duration:14s;animation-delay:-7s}
+@keyframes auth-trail-travel{0%{stroke-dashoffset:1000;opacity:0}10%,88%{opacity:.92}100%{stroke-dashoffset:0;opacity:0}}
+@media(prefers-reduced-motion:reduce){.auth-trail,.auth-ribbon-trail{animation:none!important;opacity:0}}
+
 .legal-document a{color:var(--red);font-weight:650;text-decoration:underline;text-underline-offset:3px}
 .support-links{display:flex;flex-wrap:wrap;gap:10px 22px;padding-left:19px}
 
