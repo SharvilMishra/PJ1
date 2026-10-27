@@ -5,6 +5,7 @@ import { catalogBrands, catalogPriceBounds, formatPrice, formatProcessor, format
 import type { Phone } from "../types/phone";
 
 const categories = ["All phones", "Camera", "Gaming", "Battery", "Budget", "Premium"] as const;
+type SearchCategory = typeof categories[number];
 const categoryIds: Record<string, string> = { Camera: "camera", Gaming: "gaming", Battery: "battery", Budget: "budget", Premium: "flagship" };
 const minCatalogPrice = Number.isFinite(catalogPriceBounds.min) ? catalogPriceBounds.min : 0;
 const maxCatalogPrice = Number.isFinite(catalogPriceBounds.max) ? catalogPriceBounds.max : 2000;
@@ -28,7 +29,7 @@ type PersistedFilters = {
   minStorage: number;
   minBattery: number;
   minCamera: number;
-  activeCategory: string;
+  activeCategory: SearchCategory;
   sort: string;
 };
 
@@ -36,7 +37,12 @@ const SEARCH_FILTERS_KEY = "elyvex.search-filters";
 function readPersistedFilters(): Partial<PersistedFilters> {
   try {
     const value: unknown = JSON.parse(sessionStorage.getItem(SEARCH_FILTERS_KEY) || "null");
-    return value && typeof value === "object" ? value as Partial<PersistedFilters> : {};
+    if (!value || typeof value !== "object") return {};
+    const parsed = value as Partial<PersistedFilters>;
+    return {
+      ...parsed,
+      activeCategory: categories.includes(parsed.activeCategory as SearchCategory) ? parsed.activeCategory : undefined,
+    };
   } catch {
     return {};
   }
