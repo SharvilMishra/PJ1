@@ -13,6 +13,8 @@ import { ProfilePage } from "./pages/ProfilePage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { PrivacyPage } from "./pages/PrivacyPage";
 import { TermsPage } from "./pages/TermsPage";
+import { AboutPage } from "./pages/AboutPage";
+import { DeveloperContacts } from "./components/DeveloperContacts";
 import { LatestUpdatesDialog } from "./components/LatestUpdatesDialog";
 import { UserPreferencesProvider } from "./auth/UserPreferencesProvider";
 import { PhoneActionsProvider } from "./auth/PhoneActionsProvider";
@@ -85,8 +87,8 @@ function AppShell() {
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
-        <Route path="/help" element={<main className="page-wrap legal-page"><section className="page-heading"><span className="eyebrow">WE’RE HERE TO HELP</span><h1>Help &amp; feedback</h1><p className="lead">Questions about a phone, recommendation, or your account? Contact the ELYVEX developer.</p></section><article className="legal-document"><section id="support"><h2>Developer support</h2><p>For support by email, write to <a href="mailto:eng.sharvilmishra@gmail.com">eng.sharvilmishra@gmail.com</a>. You can also find the developer on these channels:</p><ul className="support-links"><li><a href="https://github.com/SharvilMishra" target="_blank" rel="noreferrer">GitHub</a></li><li><a href="https://www.instagram.com/sharvil.tech/" target="_blank" rel="noreferrer">Instagram</a></li><li><a href="https://www.reddit.com/user/voidwalker-dev/" target="_blank" rel="noreferrer">Reddit</a></li><li><a href="https://www.linkedin.com/in/sharvil-mishra-07888238a/" target="_blank" rel="noreferrer">LinkedIn</a></li></ul><p>You can browse ELYVEX without an account. For account requests, include the email address associated with the account and avoid sending passwords or verification codes.</p></section></article></main>} />
-        <Route path="/about" element={<main className="page-wrap"><section className="page-heading"><p className="eyebrow">A little about us</p><h1>Better choices begin here.</h1><p className="lead">ELYVEX helps you find a phone that fits the way you live.</p></section></main>} />
+        <Route path="/help" element={<main className="page-wrap legal-page"><section className="page-heading"><span className="eyebrow">WE’RE HERE TO HELP</span><h1>Help &amp; feedback</h1><p className="lead">Questions about a phone, recommendation, or your account? Contact the ELYVEX developer.</p></section><article className="legal-document"><section id="support"><h2>Developer support</h2><p>For support, reach out by email or choose a social channel:</p><DeveloperContacts /><p>You can browse ELYVEX without an account. For account requests, include the email address associated with the account and avoid sending passwords or verification codes.</p></section></article></main>} />
+        <Route path="/about" element={<AboutPage />} />
       </Routes>
       <footer className="site-footer"><span>© 2026 ELYVEX</span><span className="footer-links"><Link to="/privacy">Privacy</Link><Link to="/terms">Terms</Link><Link to="/about">About</Link></span><span>Better choices begin here <i>♥</i></span></footer>
       {user && <LatestUpdatesDialog userId={user.uid} />}
