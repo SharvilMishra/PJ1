@@ -90,7 +90,20 @@ function AppShell() {
         <Route path="/help" element={<main className="page-wrap legal-page"><section className="page-heading"><span className="eyebrow">WE’RE HERE TO HELP</span><h1>Help &amp; feedback</h1><p className="lead">Questions about a phone, recommendation, or your account? Contact the ELYVEX developer.</p></section><article className="legal-document"><section id="support"><h2>Developer support</h2><p>For support, reach out by email or choose a social channel:</p><DeveloperContacts /><p>You can browse ELYVEX without an account. For account requests, include the email address associated with the account and avoid sending passwords or verification codes.</p></section></article></main>} />
         <Route path="/about" element={<AboutPage />} />
       </Routes>
-      <footer className="site-footer"><span>© 2026 ELYVEX</span><span className="footer-links"><Link to="/privacy">Privacy</Link><Link to="/terms">Terms</Link><Link to="/about">About</Link></span><span>Better choices begin here <i>♥</i></span></footer>
+      <footer className="site-footer">
+        <div className="footer-main">
+          <section className="footer-brand-block" aria-label="About ELYVEX">
+            <Link className="footer-brand" to="/" aria-label="ELYVEX home"><img src={`${import.meta.env.BASE_URL}assets/elyvex-symbol-transparent.png`} alt="" /><span>ELYVEX<small>BETTER CHOICES BEGIN HERE</small></span></Link>
+            <p>Explore phone specifications, compare your shortlist, and find recommendations shaped by your priorities.</p>
+            <span className="footer-data-note">Recommendations use the supplied catalog. Missing specifications are not estimated.</span>
+          </section>
+          <nav className="footer-column" aria-label="Explore phones"><h2>Explore</h2><Link to="/">Discover</Link><Link to="/search">Search all phones</Link><Link to="/search?category=Camera">Camera picks</Link><Link to="/search?category=Gaming">Gaming picks</Link><Link to="/search?category=Battery">Battery picks</Link><Link to="/search?category=Budget">Budget picks</Link></nav>
+          <nav className="footer-column" aria-label="Compare and recommendations"><h2>Choose with confidence</h2><Link to="/compare">Compare phones</Link><Link to="/recommendations">What we recommend</Link><Link to="/about">How ELYVEX works</Link></nav>
+          <nav className="footer-column" aria-label="Account and support"><h2>Your ELYVEX</h2><Link to="/profile">Profile &amp; saved phones</Link><Link to="/settings">Settings</Link><Link to="/help">Help &amp; feedback</Link>{!user && <Link to="/signin">Sign in</Link>}<a href="mailto:eng.sharvilmishra@gmail.com">Contact the developer</a></nav>
+          <nav className="footer-column" aria-label="Policies"><h2>Policies</h2><Link to="/privacy">Privacy policy</Link><Link to="/terms">Terms &amp; conditions</Link></nav>
+        </div>
+        <div className="footer-bottom"><span>© {new Date().getFullYear()} ELYVEX</span><span>Independent phone discovery and comparison</span><Link to="/search">Start exploring <i aria-hidden="true">↗</i></Link></div>
+      </footer>
       {user && <LatestUpdatesDialog userId={user.uid} />}
       {showHomeSplash && <HomeLoadingSplash />}
     </div>
