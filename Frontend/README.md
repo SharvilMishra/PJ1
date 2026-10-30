@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-Create a production build with `npm run build` and preview it with `npm run preview`.
+Create a production build with `npm run build` and preview it with `npm run preview`. Run the recommendation math tests with `npm run test:recommendations` (Node.js 22.6+).
 
 ## Firebase
 
@@ -21,7 +21,7 @@ The app saves signed-in profiles to `userPreferences/{firebaseUid}`. Profile fie
 firebase deploy --only firestore:rules --project ignite-1df6e
 ```
 
-Persona ranking weights, data normalization, and Firebase setup steps are documented in the repository's `docs/user-preferences.md` and `docs/firebase-setup.md`.
+Persona ranking weights, the WSM/TOPSIS/cosine hybrid recommendation engine, data normalization, and Firebase setup are documented in the repository's `docs/user-preferences.md` and `docs/firebase-setup.md`.
 
 ## Catalog
 

@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:recommendations": "node --experimental-strip-types --test tests/recommendation-engine.test.ts"
   },
   "dependencies": {
     "firebase": "^11.0.0",

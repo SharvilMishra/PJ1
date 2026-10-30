@@ -13,7 +13,9 @@ ELYVEX helps people discover, rank, and compare mobile phones from the supplied 
 
 ## Recommendation model
 
-The recommender supports Student, Creator, Gaming, Business Professional, and Senior personas. Each persona has a documented 100-point weighted profile across price, rating, RAM, storage, battery, camera, and (for Senior) display size. The selected budget filters out phones above the limit (0–2,000 source price units); the remaining phones are ranked and the top five are shown. Catalog measurements are normalized against the catalog's min/max values. A missing specification contributes zero points and is identified in the score breakdown; it is not inferred.
+The recommender supports Student, Creator, Gaming, Business Professional, and Senior personas. Each persona has a weighted profile across price, rating, RAM, storage, battery, camera, and (for Senior) display size. Saved category priorities add weight to their matching catalog criteria. Phones over the selected budget (0–2,000 source price units) or without a listed price are excluded. The remaining phones are min-max normalized and ranked with a configurable hybrid score: 40% Weighted Sum Model (WSM), 35% TOPSIS closeness, and 25% cosine similarity. The page shows the components and each criterion's WSM contribution. Missing specifications contribute zero, are flagged, and are never inferred. Normalization uses the current budget-eligible set; equal present values are neutral.
+
+The source catalog does not include GPU, refresh-rate, video capability, or objective processor benchmark data. Recommendations cannot evaluate those attributes reliably. The processor is stored as model-name text, and display type is categorical.
 
 See [the persona weights and saved preference schema](docs/user-preferences.md). The dataset's price currency and some units have not been confirmed; displayed catalog prices use source values. See [dataset notes](docs/dataset-notes.md).
 
@@ -36,6 +38,12 @@ Vite prints a local URL when the development server starts. To create a producti
 
 ```powershell
 npm run build
+```
+
+Run the mathematical engine unit tests (Node.js 22.6+):
+
+```powershell
+npm run test:recommendations
 ```
 
 The Firebase browser configuration is in `Frontend/src/auth/firebase.ts`. It contains public web-app identifiers, not Admin credentials. Do not put Firebase service-account keys or other server secrets in the frontend.

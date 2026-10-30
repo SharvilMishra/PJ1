@@ -1,6 +1,7 @@
 import catalogData from "./phones.json";
 import type { Phone } from "../types/phone";
 import { preferenceCategories, type PreferenceCategory, type RecommendationPersona } from "../auth/UserPreferencesProvider";
+export { personaWeights } from "./recommendationEngine";
 
 export const phones = catalogData as unknown as Phone[];
 export const phoneById = new Map(phones.map((phone) => [phone.id, phone]));
@@ -103,54 +104,6 @@ export function recommendationScore(phone: Phone, selected: string[]): number {
   return breakdown.length ? breakdown.reduce((sum, item) => sum + item.score, 0) / breakdown.length : 0;
 }
 
-type PersonaMetric = ScoreMetric;
-type PersonaWeight = { metric: PersonaMetric; label: string; weight: number; higherIsBetter: boolean };
-
-/** Explicit weights keep persona ranking explainable and make every persona behave differently. */
-export const personaWeights: Record<RecommendationPersona, PersonaWeight[]> = {
-  student: [
-    { metric: "price", label: "Affordable price", weight: 35, higherIsBetter: false },
-    { metric: "batteryMah", label: "Battery", weight: 20, higherIsBetter: true },
-    { metric: "storageGb", label: "Storage", weight: 15, higherIsBetter: true },
-    { metric: "ramGb", label: "RAM", weight: 10, higherIsBetter: true },
-    { metric: "rating", label: "Rating", weight: 10, higherIsBetter: true },
-    { metric: "cameraMainMp", label: "Camera", weight: 10, higherIsBetter: true },
-  ],
-  creator: [
-    { metric: "cameraMainMp", label: "Camera", weight: 35, higherIsBetter: true },
-    { metric: "storageGb", label: "Storage", weight: 20, higherIsBetter: true },
-    { metric: "ramGb", label: "RAM", weight: 15, higherIsBetter: true },
-    { metric: "rating", label: "Rating", weight: 15, higherIsBetter: true },
-    { metric: "batteryMah", label: "Battery", weight: 10, higherIsBetter: true },
-    { metric: "price", label: "Affordable price", weight: 5, higherIsBetter: false },
-  ],
-  gaming: [
-    { metric: "ramGb", label: "RAM", weight: 30, higherIsBetter: true },
-    { metric: "batteryMah", label: "Battery", weight: 20, higherIsBetter: true },
-    { metric: "rating", label: "Rating", weight: 15, higherIsBetter: true },
-    { metric: "storageGb", label: "Storage", weight: 15, higherIsBetter: true },
-    { metric: "price", label: "Affordable price", weight: 10, higherIsBetter: false },
-    { metric: "cameraMainMp", label: "Camera", weight: 10, higherIsBetter: true },
-  ],
-  business: [
-    { metric: "rating", label: "Rating", weight: 25, higherIsBetter: true },
-    { metric: "batteryMah", label: "Battery", weight: 25, higherIsBetter: true },
-    { metric: "ramGb", label: "RAM", weight: 15, higherIsBetter: true },
-    { metric: "storageGb", label: "Storage", weight: 15, higherIsBetter: true },
-    { metric: "price", label: "Affordable price", weight: 10, higherIsBetter: false },
-    { metric: "cameraMainMp", label: "Camera", weight: 10, higherIsBetter: true },
-  ],
-  senior: [
-    { metric: "batteryMah", label: "Battery", weight: 25, higherIsBetter: true },
-    { metric: "price", label: "Affordable price", weight: 20, higherIsBetter: false },
-    { metric: "rating", label: "Rating", weight: 20, higherIsBetter: true },
-    { metric: "displaySizeIn", label: "Large display", weight: 15, higherIsBetter: true },
-    { metric: "cameraMainMp", label: "Camera", weight: 10, higherIsBetter: true },
-    { metric: "storageGb", label: "Storage", weight: 5, higherIsBetter: true },
-    { metric: "ramGb", label: "RAM", weight: 5, higherIsBetter: true },
-  ],
-};
-
 export const personaLabels: Record<RecommendationPersona, string> = {
   student: "Student",
   creator: "Creator",
@@ -158,20 +111,3 @@ export const personaLabels: Record<RecommendationPersona, string> = {
   business: "Business Professional",
   senior: "Senior",
 };
-
-export function personaScoreBreakdown(phone: Phone, persona: RecommendationPersona) {
-  return personaWeights[persona].map(({ metric, label, weight, higherIsBetter }) => {
-    const value = phone[metric];
-    const bounds = preferenceBounds[metric];
-    const available = typeof value === "number" && Number.isFinite(value) && bounds.max > bounds.min;
-    const normalized = available
-      ? ((value - bounds.min) / (bounds.max - bounds.min)) * (higherIsBetter ? 1 : -1) + (higherIsBetter ? 0 : 1)
-      : null;
-    return { metric, label, weight, value: available ? value : null, normalized, contribution: normalized === null ? 0 : normalized * weight };
-  });
-}
-
-/** Weighted sum on a 0–100 scale. Missing fields contribute zero and remain visible in the explanation. */
-export function personaRecommendationScore(phone: Phone, persona: RecommendationPersona): number {
-  return personaScoreBreakdown(phone, persona).reduce((total, item) => total + item.contribution, 0);
-}

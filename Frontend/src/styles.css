@@ -360,6 +360,11 @@ body:has(.auth-page){background:#101015}
 :root[data-theme="dark"] .page-wrap :is(.lead,.dataset-note,.compare-brand,.compare-product-price,.compare-select label,.filters-title span,.results-context,.phone-brandline,.result-brand,.result-specs,.phone-specs span,.empty-saved-state p,.settings-card-title p,.toggle-row small,.profile-identity p,.saved-details>span){color:#c9bbc0}
 :root[data-theme="dark"] .page-wrap :is(.filter-chips button,.check-list label,.select-wrap select,.sort-control select,.compare-select select){color:#e7dce0}
 :root[data-theme="dark"] .page-wrap :is(button,input,select,a):focus-visible{outline-color:#ff9bad}
+.hybrid-components{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0 4px}
+.hybrid-components span{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border:1px solid #ead9dd;border-radius:7px;background:#fff5f6;color:#62565a;font-size:.58rem}
+.hybrid-components b{color:#861129;font-size:.62rem}
+:root[data-theme="dark"] .hybrid-components span{background:#302127;border-color:#514047;color:#d7c9cd}
+:root[data-theme="dark"] .hybrid-components b{color:#ff9bad}
 @media(max-width:760px){.fit-summary{grid-template-columns:1fr;padding:16px}.fit-insight-grid{grid-template-columns:1fr 1fr}.fit-summary-heading h2{font-size:1.05rem}}
 @media(max-width:480px){.fit-insight-grid{grid-template-columns:1fr}.fit-insight{padding:13px}.fit-summary{margin:18px 0 26px}.compare-table-hint{font-size:.66rem}}
 
