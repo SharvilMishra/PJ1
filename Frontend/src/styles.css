@@ -389,6 +389,25 @@ body:has(.auth-page){background:#101015}
 @media(max-width:620px){.footer-main{width:calc(100% - 40px);padding:36px 0 30px;grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 18px}.footer-brand-block{grid-column:1/-1}.footer-column h2{font-size:.72rem}.footer-column a{font-size:.68rem}.footer-bottom{padding:16px 20px;display:grid;grid-template-columns:1fr auto;gap:8px 14px}.footer-bottom>span:nth-child(2){grid-column:1/-1;grid-row:2}}
 @media(max-width:380px){.footer-main{grid-template-columns:1fr}.footer-brand-block{grid-column:auto}.footer-bottom{grid-template-columns:1fr}.footer-bottom>span:nth-child(2){grid-column:auto;grid-row:auto}}
 
+/* Native sort options and the three-dot menu stay legible in both themes. */
+:root{color-scheme:light}
+:root[data-theme="dark"]{color-scheme:dark}
+.sort-control label{color:#5e5054}
+.sort-control select{color-scheme:light;background-color:#fff;color:#38292e;border-color:#d8c8cc}
+.sort-control select option{background:#fff;color:#38292e}
+.sort-control select:focus-visible{border-color:#a91635;outline-color:#a91635}
+.menu-trigger{color:#4b393e;background:transparent;border:1px solid transparent;transition:background .16s,border-color .16s,color .16s}
+.menu-trigger span{color:inherit}
+.menu-trigger:hover,.menu-trigger[aria-expanded="true"]{background:#fff0f2;border-color:#efcdd3;color:#8f1230}
+.menu-trigger:focus-visible{background:#fff0f2;color:#8f1230}
+:root[data-theme="dark"] .sort-control label{color:#d1c3c8}
+:root[data-theme="dark"] .sort-control select{color-scheme:dark;background-color:#211b20;color:#f6edf0;border-color:#66515a}
+:root[data-theme="dark"] .sort-control select option{background:#211b20;color:#f6edf0}
+:root[data-theme="dark"] .sort-control select:focus-visible{border-color:#ff9bad;outline-color:#ff9bad}
+:root[data-theme="dark"] .menu-trigger{color:#f1e8eb;background:transparent;border-color:transparent}
+:root[data-theme="dark"] .menu-trigger:hover,:root[data-theme="dark"] .menu-trigger[aria-expanded="true"]{background:#3b222b;border-color:#69404b;color:#ff9bad}
+:root[data-theme="dark"] .menu-trigger:focus-visible{background:#3b222b;color:#ff9bad}
+
 /* A single soft highlight glides along each contour to bring the phone trails to life. */
 .auth-trail,.auth-ribbon-trail{fill:none;stroke-dasharray:90 910;stroke-linecap:round;vector-effect:non-scaling-stroke;animation:auth-trail-travel 10s linear infinite}
 .auth-trail{stroke:#d92d4a;stroke-width:2.5;filter:drop-shadow(0 0 4px #ef5b7180)}
