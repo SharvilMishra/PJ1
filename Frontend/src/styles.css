@@ -332,6 +332,37 @@ body:has(.auth-page){background:#101015}
 @keyframes auth-contour-breathe{from{opacity:.28}to{opacity:.82}}
 @media(prefers-reduced-motion:reduce){.auth-divider-wave{display:none}.auth-wave-line,.auth-wave-ribbon{animation:none!important}}
 
+/* Comparison fit cards and contrast refinements. */
+.fit-summary{display:grid;grid-template-columns:minmax(210px,.82fr) minmax(0,1.4fr);gap:18px;padding:22px;background:linear-gradient(115deg,#fff3f3,#fff);border-color:#e9cbd0}
+.fit-summary-heading{align-self:center}
+.fit-summary-heading h2{color:#27191d;font-size:1.22rem;overflow-wrap:anywhere}
+.fit-summary-heading p{max-width:410px;color:#62565a;font-size:.76rem}
+.fit-insight-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.fit-insight{min-width:0;padding:15px;border:1px solid #e9dfe0;border-radius:11px;background:#fff}
+.fit-insight.is-best-fit{border-color:#b51a3b;background:#fff4f5;box-shadow:inset 0 0 0 1px #b51a3b18}
+.fit-insight>span{color:#62565a;font-size:.62rem;font-weight:700;letter-spacing:.035em}
+.fit-insight h3{margin:8px 0 5px;color:#861129;font:750 .82rem var(--display);line-height:1.35}
+.fit-insight p{margin:0;color:#62565a;font-size:.68rem;line-height:1.5}
+.fit-insight small{display:block;margin-top:10px;color:#62565a;font-size:.6rem;font-weight:700}
+.spec-table-heading{align-items:flex-start}
+.compare-table-hint{max-width:700px;margin:8px 0 0;color:#62565a;font-size:.7rem;line-height:1.5}
+.spec-row>span.spec-missing{color:#665b5e;font-style:italic}
+.page-wrap :is(.lead,.dataset-note,.compare-brand,.compare-product-price,.compare-select label,.filters-title span,.results-context,.phone-brandline,.result-brand,.result-specs,.phone-specs span,.empty-saved-state p,.settings-card-title p,.toggle-row small,.phone-info .phone-brandline,.profile-identity p,.saved-details>span){color:#62565a}
+.page-wrap :is(.filter-chips button,.check-list label,.select-wrap select,.sort-control select,.compare-select select){color:#51464a}
+.page-wrap a:not(.button-primary):not(.outline-button):not(.header-signin):not(.brand){text-underline-offset:3px}
+.page-wrap :is(button,input,select,a):focus-visible{outline-color:#8d1530}
+:root[data-theme="dark"] .fit-summary{background:linear-gradient(115deg,#302027,#241b20);border-color:#69404b}
+:root[data-theme="dark"] .fit-summary-heading h2{color:#fff4f6}
+:root[data-theme="dark"] .fit-summary-heading p,:root[data-theme="dark"] .fit-insight>span,:root[data-theme="dark"] .fit-insight p,:root[data-theme="dark"] .fit-insight small,:root[data-theme="dark"] .compare-table-hint,:root[data-theme="dark"] .spec-row>span.spec-missing{color:#d7c9cd}
+:root[data-theme="dark"] .fit-insight{background:#211b20;border-color:#514047}
+:root[data-theme="dark"] .fit-insight.is-best-fit{background:#3b222b;border-color:#ec7189}
+:root[data-theme="dark"] .fit-insight h3{color:#ff9bad}
+:root[data-theme="dark"] .page-wrap :is(.lead,.dataset-note,.compare-brand,.compare-product-price,.compare-select label,.filters-title span,.results-context,.phone-brandline,.result-brand,.result-specs,.phone-specs span,.empty-saved-state p,.settings-card-title p,.toggle-row small,.profile-identity p,.saved-details>span){color:#c9bbc0}
+:root[data-theme="dark"] .page-wrap :is(.filter-chips button,.check-list label,.select-wrap select,.sort-control select,.compare-select select){color:#e7dce0}
+:root[data-theme="dark"] .page-wrap :is(button,input,select,a):focus-visible{outline-color:#ff9bad}
+@media(max-width:760px){.fit-summary{grid-template-columns:1fr;padding:16px}.fit-insight-grid{grid-template-columns:1fr 1fr}.fit-summary-heading h2{font-size:1.05rem}}
+@media(max-width:480px){.fit-insight-grid{grid-template-columns:1fr}.fit-insight{padding:13px}.fit-summary{margin:18px 0 26px}.compare-table-hint{font-size:.66rem}}
+
 /* A single soft highlight glides along each contour to bring the phone trails to life. */
 .auth-trail,.auth-ribbon-trail{fill:none;stroke-dasharray:90 910;stroke-linecap:round;vector-effect:non-scaling-stroke;animation:auth-trail-travel 10s linear infinite}
 .auth-trail{stroke:#d92d4a;stroke-width:2.5;filter:drop-shadow(0 0 4px #ef5b7180)}
