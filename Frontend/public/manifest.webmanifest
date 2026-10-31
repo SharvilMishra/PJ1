@@ -1,0 +1,17 @@
+{
+  "id": "./",
+  "name": "ELYVEX — Better choices begin here",
+  "short_name": "ELYVEX",
+  "description": "Discover, compare, and get phone recommendations shaped around your priorities.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#fff5f4",
+  "theme_color": "#a91635",
+  "categories": ["shopping", "lifestyle"],
+  "icons": [
+    { "src": "./icons/elyvex-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icons/elyvex-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

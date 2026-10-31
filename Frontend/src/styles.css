@@ -479,3 +479,10 @@ body:has(.auth-page){background:#101015}
 .home-persona-picker select{width:100%;min-height:42px;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:var(--surface,#fff);color:var(--ink);font:inherit}
 :root[data-theme="dark"] .home-persona-picker{background:#211b20;border-color:#3b3036;color:#f5edf0}
 @media(max-width:680px){.home-persona-picker{grid-template-columns:1fr;gap:13px;padding:15px}.home-persona-picker .button-primary{justify-self:start}}
+.install-app-action{font:inherit;text-align:left;cursor:pointer}
+.install-help-backdrop{position:fixed;z-index:80;inset:0;display:grid;place-items:center;padding:20px;background:#1e111a99;backdrop-filter:blur(5px)}
+.install-help{position:relative;width:min(440px,100%);padding:30px;border:1px solid var(--line);border-radius:18px;background:var(--surface,#fff);box-shadow:0 24px 80px #14090d55;text-align:center;color:var(--ink)}
+.install-help .recommendation-gate-icon{margin:0 auto 15px}
+.install-help h2{margin:9px 0;font:800 1.5rem/1.2 var(--display);letter-spacing:-.05em}
+.install-help p{margin:0 auto 21px;max-width:350px;color:var(--muted);font-size:.82rem;line-height:1.6}
+.install-help-close{position:absolute;top:10px;right:12px;border:0;background:transparent;color:var(--muted);font-size:1.5rem}

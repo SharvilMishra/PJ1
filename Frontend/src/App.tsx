@@ -19,6 +19,7 @@ import { LatestUpdatesDialog } from "./components/LatestUpdatesDialog";
 import { UserPreferencesProvider } from "./auth/UserPreferencesProvider";
 import { PhoneActionsProvider } from "./auth/PhoneActionsProvider";
 import { AppPageSkeleton } from "./components/LoadingSkeletons";
+import { InstallAppAction } from "./components/InstallAppAction";
 
 function HomeLoadingSplash() {
   return <div className="home-loading-splash" role="status" aria-label="Loading ELYVEX">
@@ -64,6 +65,7 @@ function AppShell() {
               <Link to="/search" onClick={() => setMenuOpen(false)}><span>⌕</span>Search phone</Link>
               <Link to="/compare" onClick={() => setMenuOpen(false)}><span>⇄</span>Compare phones</Link>
               <Link to="/recommendations" onClick={() => setMenuOpen(false)}><span>✦</span>What we recommend</Link>
+              <InstallAppAction onDone={() => setMenuOpen(false)} />
               <Link to="/profile#saved" onClick={() => setMenuOpen(false)}><span>♡</span>Saved phones</Link>
               <div className="menu-divider" />
               <p className="menu-label">YOUR ACCOUNT</p>
