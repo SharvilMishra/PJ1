@@ -47,8 +47,20 @@ export function UserPreferencesProvider({ children }: { children: ReactNode }) {
 
     async function loadPreferences() {
       if (!user) {
-        try { localStorage.removeItem("elyvex.guest.preferences"); } catch { /* Storage is optional. */ }
-        if (!cancelled) { setPreferences(emptyPreferences); setLoading(false); }
+        let guestPreferences = emptyPreferences;
+        try {
+          const saved = localStorage.getItem("elyvex.guest.preferences");
+          if (saved) {
+            const data = JSON.parse(saved) as Record<string, unknown>;
+            guestPreferences = {
+              categories: normalizeCategories(data.categories),
+              persona: normalizePersona(data.persona),
+              maxPrice: typeof data.maxPrice === "number" && Number.isFinite(data.maxPrice)
+                ? Math.min(DEFAULT_MAX_PRICE, Math.max(0, data.maxPrice)) : DEFAULT_MAX_PRICE,
+            };
+          }
+        } catch { /* Storage is optional. */ }
+        if (!cancelled) { setPreferences(guestPreferences); setLoading(false); }
         return;
       }
       if (!db) {
@@ -87,10 +99,14 @@ export function UserPreferencesProvider({ children }: { children: ReactNode }) {
       persona: normalizePersona(next.persona),
       maxPrice: Number.isFinite(next.maxPrice) ? Math.min(DEFAULT_MAX_PRICE, Math.max(0, next.maxPrice)) : DEFAULT_MAX_PRICE,
     };
-    if (!user) throw new Error("Sign in to save recommendation priorities.");
     setSaving(true);
     setError("");
     try {
+      if (!user) {
+        try { localStorage.setItem("elyvex.guest.preferences", JSON.stringify(safePreferences)); } catch { /* Storage is optional. */ }
+        setPreferences(safePreferences);
+        return;
+      }
       if (!db) throw new Error("Firebase is not configured.");
       await setDoc(doc(db, "userPreferences", user.uid), {
         categories: safePreferences.categories,

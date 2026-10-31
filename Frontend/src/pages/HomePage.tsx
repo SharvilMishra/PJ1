@@ -1,8 +1,8 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { usePhoneActions } from "../auth/PhoneActionsProvider";
-import { useUserPreferences, type PreferenceCategory } from "../auth/UserPreferencesProvider";
-import { formatPrice, formatRating, phones, phoneSpecs, rankPhones } from "../data/catalog";
+import { recommendationPersonas, useUserPreferences, type PreferenceCategory, type RecommendationPersona } from "../auth/UserPreferencesProvider";
+import { formatPrice, formatRating, personaLabels, phones, phoneSpecs, rankPhones } from "../data/catalog";
 import { PhoneCardsSkeleton } from "../components/LoadingSkeletons";
 
 const categories: { name: string; note: string; icon: string; tone: string; id: PreferenceCategory }[] = [
@@ -19,7 +19,7 @@ const preferenceNames: Record<PreferenceCategory, string> = {
 export function HomePage() {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
-  const { preferences, loading: preferencesLoading } = useUserPreferences();
+  const { preferences, loading: preferencesLoading, savePreferences } = useUserPreferences();
   const { savedIds, compareIds, toggleSaved, toggleCompare } = usePhoneActions();
   const rankedPhones = rankPhones(preferences.categories).slice(0, 3);
   const preferredLabels = categories.filter((category) => preferences.categories.includes(category.id)).map((category) => category.name);
@@ -38,7 +38,7 @@ export function HomePage() {
       <div className="hero-visual"><div className="visual-orbit orbit-large" /><div className="visual-orbit orbit-small" /><div className="visual-spark spark-a">✳</div><div className="visual-spark spark-b">✦</div><img className="hero-device-photo" src={`${import.meta.env.BASE_URL}assets/login-phone-cutout.png`} alt="Glossy crimson smartphone viewed from the back" /><div className="match-bubble"><span className="match-heart">✦</span><span><b>Built from your priorities</b><small>Ranked from the catalog</small></span><strong>✓</strong></div><div className="visual-label">FIND YOUR NEXT FAVORITE <i /></div></div>
     </section>
 
-    <section className="category-section"><div className="section-heading"><div><span className="eyebrow">START WITH WHAT MATTERS</span><h2>What’s your priority?</h2></div><Link to="/search" className="text-link">Explore all filters <span>↗</span></Link></div><div className="category-grid">{categories.map((category) => <Link to={`/search?category=${category.id}`} className={`category-card ${category.tone}`} key={category.name}><span className="category-icon">{category.icon}</span><span><b>{category.name}</b><small>{category.note}</small></span><span className="category-arrow">↗</span></Link>)}</div></section>
+    <section className="category-section"><div className="section-heading"><div><span className="eyebrow">START WITH WHAT MATTERS</span><h2>What’s your priority?</h2></div><Link to="/search" className="text-link">Explore all filters <span>↗</span></Link></div><div className="category-grid">{categories.map((category) => <Link to={`/search?category=${category.id}`} className={`category-card ${category.tone}`} key={category.name}><span className="category-icon">{category.icon}</span><span><b>{category.name}</b><small>{category.note}</small></span><span className="category-arrow">↗</span></Link>)}</div><div className="home-persona-picker"><div><span className="eyebrow">PERSONALIZE YOUR PICKS</span><h3>Choose your persona</h3><p>Tell us what matters to you. No account needed.</p></div><label htmlFor="home-persona">Persona<select id="home-persona" value={preferences.persona || ""} onChange={(event) => void savePreferences({ ...preferences, persona: (event.target.value || null) as RecommendationPersona | null })}><option value="">Choose a persona</option>{recommendationPersonas.map((persona) => <option key={persona} value={persona}>{personaLabels[persona]}</option>)}</select></label><Link className="button-primary" to="/recommendations">See recommendations <span>↗</span></Link></div></section>
 
     <section className="picks-section"><div className="section-heading"><div><span className="eyebrow">{preferredLabels.length ? "RANKED FOR YOUR PREFERENCES" : "FROM THE PHONE CATALOG"}</span><h2>{preferredLabels.length ? "Your top matches" : "Top-rated phones"}</h2></div><Link to="/search" className="text-link">See all {phones.length} phones <span>↗</span></Link></div>
       {preferredLabels.length > 0 && <div className="preference-summary">Prioritizing {preferredLabels.map((label) => <span key={label}>{label}</span>)}<Link to="/settings">Edit preferences</Link></div>}
